@@ -27,10 +27,11 @@ Order = critical path to the demo. Tasks marked ⭐ are required for the demo.
 | Q01 | | Error handling and logs: request IDs end to end, access log, log file, frontend error boundary, timeouts | Claude | — | done | `docs/architecture/backend-architecture.md#logging`, `docs/api/errors.md` |
 | Q02 | | Frontend tests (Vitest + Testing Library) | Claude | — | done | `docs/testing/strategy.md#frontend` |
 | Q03 | | Maintainability: ruff config + format, ESLint + Prettier, `make lint`, remove duplicated SQL | Claude | — | done | `ruff.toml`, `frontend/eslint.config.js` |
-| Q04 | | Docs reconciled with the built app (Lovable/mocks removed); agent-use write-up | Claude | — | done | `docs/process/agent-use.md` |
+| Q04 | | Docs reconciled with the built app (Lovable/mocks removed); agent-use write-up | Claude | — | done | `AGENT_USAGE.md` |
 | Q05 | | Structured logs: `LOG_FORMAT=json`, named events for HTTP, analysis and LLM steps | Claude sub-agent, reviewed by Claude | Q01 | done | `docs/architecture/backend-architecture.md#logging` |
 | Q06 | | Client-side validation in the review edit and clarification answer forms | Claude sub-agent, reviewed by Claude | Q02 | done | `docs/frontend/architecture.md#error-handling` |
-| P01 | | Git history, license, demo rehearsal | User | Q01–Q06 | todo | |
+| Q07 | | README (architecture, scope, tests, limitations, deployment) and root `AGENT_USAGE.md` (prompts, mistakes, verification) | Claude | Q04 | done | `README.md`, `AGENT_USAGE.md` |
+| P01 | | Git history, license, demo rehearsal | User | Q01–Q07 | in progress | history and MIT license pushed to github.com/MuskanSingh45/contract-assistant; demo rehearsal left |
 | P02 | | Deployment packaging and docs | — | P01 | todo | `docs/architecture/deployment.md` |
 
 **Status 2026-10-03 night:** the end-to-end demo works with the real model (about 2 min per contract). A04 (evaluation), S01 (3 more samples) and T01 (17 integration tests, by Codex) are done. Fixed a parser bug: short numbered clauses were dropped as headings (regression test added).

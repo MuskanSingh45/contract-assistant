@@ -2,7 +2,7 @@
 
 Several agents work on this repo (Claude and Codex; Lovable was planned and dropped). This
 directory makes sure they all work from the same plan. How this worked in practice, and how
-agent output was verified: [docs/process/agent-use.md](../docs/process/agent-use.md).
+agent output was verified: [AGENT_USAGE.md](../AGENT_USAGE.md).
 
 **Every agent, before changing anything:**
 
