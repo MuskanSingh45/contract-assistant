@@ -38,5 +38,9 @@
     "tailwindcss": "^3.4.19",
     "vite": "^5.4.21",
     "vitest": "^2.1.9"
-  }
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "description": "Contract Obligation and Renewal Assistant: React + JavaScript frontend (Vite, Tailwind)"
 }

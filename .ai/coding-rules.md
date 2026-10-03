@@ -3,7 +3,7 @@
 ## General
 - Match the documented contract exactly: names, enums and shapes from `docs/api/`, `db/migrations/` and `ai/schemas/`.
 - Do not add dependencies not in `requirements.txt` / `package.json` without noting it in the task log.
-- No dead code, no speculative abstractions, no placeholder implementations that return fake data. If something is not built, raise `NotImplementedError` or leave the file empty.
+- No dead code, no speculative abstractions, no placeholder implementations that return fake data. If something is not built, do not create a file for it.
 - Keep functions small and pure where possible. Inject I/O (`today`, DB connection, LLM client).
 
 ## Python (backend/, ai/, db/, scripts/)

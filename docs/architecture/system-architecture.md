@@ -22,13 +22,13 @@ Database + AI Pipeline
                              │
                              ▼
                     ┌──────────────────┐
-                    │ React / Vite     │
+                    │ React + JS (Vite)│
                     │ Frontend         │
                     └────────┬─────────┘
                              │ REST API
                              ▼
                     ┌──────────────────┐
-                    │ FastAPI Backend  │
+                    │ FastAPI (Python) │
                     └───────┬────┬─────┘
                             │    │
                   ┌─────────┘    └─────────┐
@@ -42,6 +42,10 @@ Database + AI Pipeline
                                     │ Ollama       │
                                     │ Qwen3-8B     │
                                     └──────────────┘
+
+---
+
+Stack details: [ADR 001](../decisions/001-stack.md).
 
 ---
 

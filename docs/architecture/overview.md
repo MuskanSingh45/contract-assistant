@@ -3,11 +3,13 @@
 ## System
 
 User
-→ React/Vite frontend
+→ React + JavaScript frontend (Vite, Tailwind)
 → FastAPI REST API
 → application services
 → SQLite and AI pipeline
 → Ollama/Qwen3-8B
+
+Stack: [ADR 001](../decisions/001-stack.md).
 
 ## Major responsibilities
 

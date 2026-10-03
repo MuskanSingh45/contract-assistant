@@ -4,7 +4,7 @@
 |---|---|
 | `migrations/NNN_*.sql` | **The only schema definition.** Applied in order and tracked in `schema_migrations`. |
 | `seeds/development.sql` | Demo data (Acme: clean; Globex: notice-period conflict). Matches the examples in `docs/api/`. |
-| `database.py` | `connect()` and `migrate()` (not yet implemented, task B01) |
+| `database.py` | `connect()` (foreign keys on, `sqlite3.Row`) and `migrate()` (applies pending migrations at startup) |
 
 Quick manual check:
 ```bash

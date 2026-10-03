@@ -1,8 +1,9 @@
 # Backend Architecture
 
 ## Stack
-Python 3.11+, FastAPI, Uvicorn, stdlib `sqlite3`, PyMuPDF, python-docx, python-dateutil,
-httpx (Ollama client), jsonschema, rapidfuzz. See `requirements.txt`.
+Python 3.11+, FastAPI, Uvicorn, Pydantic, stdlib `sqlite3`, PyMuPDF, python-docx,
+python-dateutil, httpx (Ollama client), jsonschema, rapidfuzz, python-dotenv. Tests: pytest;
+lint/format: ruff. See `requirements.txt`.
 
 ## Layout
 

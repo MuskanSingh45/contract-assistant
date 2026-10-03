@@ -5,7 +5,7 @@ Each resource has its own file with full request/response examples. If a shape i
 documented here, it does not exist yet: do not invent it in the frontend or the backend.
 Add it to the docs first.
 
-Once the backend exists, FastAPI's generated OpenAPI spec (`/openapi.json`) must match these
+FastAPI's generated OpenAPI spec (`/openapi.json`, browsable at http://localhost:8000/docs) must match these
 docs. If they disagree, fix whichever one is wrong in the same change.
 
 ## Conventions

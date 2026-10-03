@@ -61,10 +61,12 @@ Browser ── React + JavaScript (Vite) ──HTTP/JSON──▶ FastAPI ──
 | Layer | Tech | Where |
 |---|---|---|
 | Frontend | React 18 (JavaScript/JSX), Vite, Tailwind, React Router; Node.js 18+ for tooling | `frontend/` |
-| API and services | FastAPI, stdlib `sqlite3` (no ORM) | `backend/` |
-| Data | SQLite; schema in SQL migrations | `db/` |
+| API and services | Python 3.11+, FastAPI, Uvicorn, Pydantic | `backend/` |
+| Documents | PyMuPDF (PDF), python-docx (DOCX) | `backend/documents/` |
+| Data | SQLite via built-in `sqlite3` (no ORM); schema in SQL migrations | `db/` |
 | AI | Ollama + Qwen3-8B, JSON Schema output, grounding validators | `ai/` |
 | Dates | Pure functions with unit tests | `backend/utils/dates.py` |
+| Tests and quality | pytest, Vitest + Testing Library, ruff, ESLint, Prettier | `tests/`, `frontend/src/**/*.test.*` |
 
 Details: [architecture](docs/architecture/overview.md), [data flow](docs/architecture/data-flow.md),
 [AI pipeline](docs/ai/pipeline.md), [API](docs/api/api-contract.md), [schema](docs/database/schema.md),
