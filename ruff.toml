@@ -1,0 +1,23 @@
+# Lint + format settings for backend/, ai/, db/, scripts/, tests/. Run: make lint
+line-length = 120
+target-version = "py311"
+extend-exclude = ["frontend", "data", "uploads"]
+
+[lint]
+# pycodestyle, pyflakes, import order, bugbear, blind except, pyupgrade, naive datetimes, ruff-specific
+select = ["E", "W", "F", "I", "B", "BLE", "UP", "DTZ", "RUF"]
+ignore = [
+  "RUF001", "RUF002", "RUF003",  # contracts and prompts legitimately contain typographic quotes/dashes
+]
+
+[lint.flake8-bugbear]
+# FastAPI dependency markers are evaluated once by design; they are not mutable defaults.
+extend-immutable-calls = ["fastapi.Depends", "fastapi.File", "fastapi.Form", "fastapi.Body", "fastapi.Query"]
+
+[lint.isort]
+known-first-party = ["ai", "backend", "db", "scripts", "tests"]
+
+[lint.per-file-ignores]
+# Runnable scripts put the repo root on sys.path before importing project modules.
+"scripts/*.py" = ["E402"]
+"tests/backend/documents/make_samples.py" = ["E402"]

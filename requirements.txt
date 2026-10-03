@@ -1,0 +1,16 @@
+# Backend + AI (one virtualenv at repo root)
+fastapi>=0.115
+uvicorn[standard]>=0.30
+python-multipart>=0.0.9      # multipart uploads
+pydantic>=2.7
+PyMuPDF>=1.24                # PDF parsing
+python-docx>=1.1             # DOCX parsing
+python-dateutil>=2.9         # date arithmetic and parsing
+httpx>=0.27                  # Ollama client
+jsonschema>=4.22             # LLM output validation
+rapidfuzz>=3.9               # fuzzy citation matching, version comparison
+python-dotenv>=1.0
+
+# Dev / test
+pytest>=8.2
+ruff>=0.5
