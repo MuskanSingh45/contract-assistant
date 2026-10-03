@@ -14,6 +14,26 @@ deterministic deadlines → human review. **Live demo: https://contract-assistan
 - **Tests:** 158 backend/AI tests and 56 frontend tests, none of which need the model ([strategy](docs/testing/strategy.md)).
 - **How AI coding agents were used:** [AGENT_USAGE.md](AGENT_USAGE.md).
 
+## For reviewers
+
+**Live app:** https://contract-assistant-flame.vercel.app · **API docs:** https://contract-assistant-api-4qba.onrender.com/docs
+
+- **No login or test account is needed.** Each browser gets its own private workspace, preloaded with two demo contracts (Acme, Globex). Settings → *Start a fresh workspace* resets it.
+- **First load:** if the backend was idle, it can take about a minute to wake up (free hosting; a scheduled ping keeps it awake during review).
+- **Online model:** Groq-hosted Qwen. Uploaded text is sent to Groq, so please use the sample contracts below.
+
+| Sample (PDF) | What it shows | Expected result |
+|---|---|---|
+| [acme-services-agreement.pdf](https://github.com/MuskanSingh45/contract-assistant/raw/main/contracts/samples/simple/acme-services-agreement.pdf) | Clean contract, auto-renewal | Notice deadline **2026-11-02** (90 days before 2027-01-31) |
+| [globex-hosting-agreement.pdf](https://github.com/MuskanSingh45/contract-assistant/raw/main/contracts/samples/conflicting/globex-hosting-agreement.pdf) | Conflicting clauses (90 vs 60 days) | A clarification question; the deadline stays **blocked** until you choose |
+| [northstar-software-subscription.pdf](https://github.com/MuskanSingh45/contract-assistant/raw/main/contracts/samples/renewal/northstar-software-subscription.pdf) | Term written as a duration, business days | Expiration calculated from the term; business-day notice |
+| [meridian-consulting-agreement.pdf](https://github.com/MuskanSingh45/contract-assistant/raw/main/contracts/samples/ambiguous/meridian-consulting-agreement.pdf) | No fixed term, vague notice | Fields left empty rather than invented; a "missing information" question |
+| [harbor-logistics-agreement.pdf](https://github.com/MuskanSingh45/contract-assistant/raw/main/contracts/samples/multiple-obligations/harbor-logistics-agreement.pdf) | Many obligations, rights vs duties | 7 obligations; "may inspect" is not an obligation |
+
+**Suggested flow (about 3 minutes):** Upload Contract → watch the analysis (about 15–60 s) → open a
+value's citation chip to see the source quote → approve, edit or reject a value → Review Queue:
+resolve the Globex 90/60 conflict → the notice deadline appears on the contract.
+
 ## Setup
 
 Requires Python 3.11+, Node.js 18+, [Ollama](https://ollama.com) (macOS: the Ollama app) and
@@ -30,6 +50,7 @@ Open http://localhost:5173. API docs are at http://localhost:8000/docs.
 |---|---|
 | `make test` | 158 backend/AI tests (pytest) + 56 frontend tests (Vitest) + frontend ESLint. No model needed |
 | `make lint` | ruff lint/format check, ESLint, Prettier check (`make fmt` fixes) |
+| CI | `.github/workflows/ci.yml` runs the same tests, lint and build on every push |
 | `make eval` | real-model evaluation on the 5 sample contracts (about 7 min) |
 | `make reset` | restore the demo data (Acme clean, Globex with an open conflict) |
 
@@ -152,7 +173,7 @@ evaluation: 100% recall, 97.1% precision, 0 invented values ([results](docs/test
 A live analysis of the Acme sample took 21 s and produced the correct notice deadline.
 
 What to know about the online demo:
-- **First visit after a quiet period:** Render's free service sleeps after 15 minutes without traffic; the first request wakes it in about a minute.
+- **First visit after a quiet period:** Render's free service sleeps after 15 minutes without traffic; the first request wakes it in about a minute. A scheduled GitHub Actions ping (`.github/workflows/keep-warm.yml`, every 10 minutes) keeps it awake during review.
 - **Data resets:** Render's free disk is not persistent, so each restart reloads the demo data (Acme and Globex). Uploads are temporary.
 - **Privacy:** contract text uploaded online is sent to Groq. Use only non-confidential documents such as `contracts/samples/`. Run locally (`make dev`, Ollama) to keep text on your machine.
 - **Limits:** Groq's free tier allows about 8,000 tokens per minute and 1,000 requests per day; the client waits and retries when it hits the per-minute limit. To protect that quota, each address can start at most 20 analyses per hour.
