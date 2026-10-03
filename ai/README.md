@@ -1,12 +1,12 @@
 # ai/
 
-The extraction pipeline around Qwen3-8B (Ollama). It has no database access. The backend
+The extraction pipeline around Qwen models: Qwen3-8B via Ollama locally, or `qwen/qwen3.8-27b` via Groq for the online deployment (`LLM_PROVIDER`). It has no database access. The backend
 calls `ai.pipeline.orchestrator.analyze(segments, on_progress=...)`. The interface is in
 `.ai/agents/ai.md`.
 
 | Path | Purpose |
 |---|---|
-| `llm/` | Ollama client (`format` = JSON Schema, `think=false`, `num_ctx`), model config, structured output parsing + retry |
+| `llm/` | `make_client()` provider switch; Ollama client (`format` = JSON Schema, `think=false`, `num_ctx`); Groq client (OpenAI-compatible, `json_schema` response format, 429 retry); model config; structured output parsing + retry |
 | `pipeline/` | orchestrator (windowing, merge), terms extraction, obligation extraction, deterministic conflict detection, clarification templates |
 | `prompts/extraction/` | `terms.txt`, `obligations.txt` (versioned via a `# version:` header) |
 | `schemas/` | `extraction.json`, `obligation.json`: JSON Schemas for model output |

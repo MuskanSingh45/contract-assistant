@@ -11,7 +11,7 @@ silently.
 deterministic deadlines → human review. **Live demo: https://contract-assistant-flame.vercel.app**
 
 - **AI evaluation:** 100% precision and 0 invented values on the 5 sample contracts ([results and caveats](docs/testing/ai-evaluation.md)).
-- **Tests:** 130 backend/AI tests and 54 frontend tests, none of which need the model ([strategy](docs/testing/strategy.md)).
+- **Tests:** 144 backend/AI tests and 54 frontend tests, none of which need the model ([strategy](docs/testing/strategy.md)).
 - **How AI coding agents were used:** [AGENT_USAGE.md](AGENT_USAGE.md).
 
 ## Setup
@@ -28,7 +28,7 @@ Open http://localhost:5173. API docs are at http://localhost:8000/docs.
 
 | Command | What it does |
 |---|---|
-| `make test` | 130 backend/AI tests (pytest) + 54 frontend tests (Vitest) + frontend ESLint. No model needed |
+| `make test` | 144 backend/AI tests (pytest) + 54 frontend tests (Vitest) + frontend ESLint. No model needed |
 | `make lint` | ruff lint/format check, ESLint, Prettier check (`make fmt` fixes) |
 | `make eval` | real-model evaluation on the 5 sample contracts (about 7 min) |
 | `make reset` | restore the demo data (Acme clean, Globex with an open conflict) |
@@ -69,7 +69,7 @@ Browser ── React + JavaScript (Vite) ──HTTP/JSON──▶ FastAPI ──
 | Tests and quality | pytest, Vitest + Testing Library, ruff, ESLint, Prettier | `tests/`, `frontend/src/**/*.test.*` |
 
 Details: [architecture](docs/architecture/overview.md), [data flow](docs/architecture/data-flow.md),
-[AI pipeline](docs/ai/pipeline.md), [API](docs/api/api-contract.md), [schema](docs/database/schema.md),
+[AI pipeline](docs/ai/pipeline.md), [prompt design](docs/ai/prompts.md), [API](docs/api/api-contract.md), [schema](docs/database/schema.md),
 decisions in [ADRs 001–008](docs/decisions/).
 
 ## Scope
@@ -103,13 +103,13 @@ Full list: [docs/product/scope.md](docs/product/scope.md).
 
 | Suite | Count | Covers |
 |---|---|---|
-| Backend (pytest) | 66 | date engine, parsers, API endpoints, errors and logging |
-| AI (pytest) | 47 | citation validation, grounding, conflicts, clarification templates, model client errors and timeouts, evaluation metrics |
+| Backend (pytest) | 67 | date engine, parsers, API endpoints, errors and logging (request IDs, JSON log events) |
+| AI (pytest) | 60 | citation validation, grounding, conflicts, clarification templates, Ollama and Groq clients (provider selection, rate-limit retries, errors, timeouts), evaluation metrics |
 | Integration (pytest) | 17 | upload → analyze → review → recalculate; re-analysis; versions; edge cases |
 | Frontend (Vitest) | 54 | API client errors, hooks, error states, form validation, review actions, conflict resolution, upload and contracts pages |
-| AI evaluation (`make eval`) | 5 contracts | precision, invented values, missing information, conflicts, dates, citations against expected outputs |
+| AI evaluation (`make eval`; `LLM_PROVIDER=groq` for the hosted model) | 5 contracts | precision, invented values, missing information, conflicts, dates, citations against expected outputs |
 
-The default suite uses a scripted fake model, so it runs in seconds without Ollama. Model
+The default suite uses a scripted fake model and never calls Ollama or Groq, so it runs in seconds offline. Model
 quality is measured by `make eval`. Details: [testing strategy](docs/testing/strategy.md).
 
 ## Limitations

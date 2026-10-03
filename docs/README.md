@@ -24,6 +24,7 @@ AI-generated information with source citations. It is **not legal advice**.
 | Frontend | [frontend/architecture.md](frontend/architecture.md) | routes, pages with data sources, components |
 | Decisions | [decisions/](decisions/) | ADR 001–008 |
 | Testing | [testing/strategy.md](testing/strategy.md) | what each suite covers, test cases with concrete dates, AI evaluation |
+| Deployment | [architecture/deployment.md](architecture/deployment.md) | live hosts (Vercel, Render, Groq), redeploy steps, local setup |
 | Process | [../AGENT_USAGE.md](../AGENT_USAGE.md) | how AI coding agents were used and checked |
 
 ## Sources of truth (when two things disagree)

@@ -2,12 +2,12 @@
 
 | Command | Runs | Needs the model |
 |---|---|---|
-| `make test` | backend + AI tests (pytest, 130), frontend tests (Vitest, 54), frontend ESLint | no |
+| `make test` | backend + AI tests (pytest, 144), frontend tests (Vitest, 54), frontend ESLint | no |
 | `make lint` | ruff lint + format check, ESLint, Prettier check | no |
 | `make eval` | real-model evaluation on the 5 sample contracts ([ai-evaluation.md](ai-evaluation.md)) | yes, about 7 min |
 | `.venv/bin/python -m pytest -m llm` | the one live-model smoke test (deselected by default) | yes |
 
-The default suite never calls Ollama: AI tests use a scripted fake model (`tests/ai/fake_llm.py`), and API/integration tests replace the orchestrator. That keeps `make test` fast (a few seconds) and deterministic. Model quality is measured separately by `make eval`.
+The default suite never calls Ollama or Groq (it is pinned to `LLM_PROVIDER=ollama` and mocks the network): AI tests use a scripted fake model (`tests/ai/fake_llm.py`), and API/integration tests replace the orchestrator. That keeps `make test` fast (a few seconds) and deterministic. Model quality is measured separately by `make eval`.
 
 Concrete cases and their expected values are in [test-cases.md](test-cases.md). Reference "today" for date tests is **2026-10-03**.
 
@@ -18,8 +18,8 @@ Concrete cases and their expected values are in [test-cases.md](test-cases.md). 
 | Date calculation | `tests/backend/services/test_dates.py` | 23 | notice deadlines, month clamping, business days, roll-forward, conflicts block deadlines |
 | Parsing | `tests/backend/documents/` | 17 | PDF/DOCX/TXT → segments with page and section; empty/scanned files fail with the right code |
 | API | `tests/backend/api/test_api.py` | 12 | endpoint shapes over the demo seed, upload checks, review/resolve recalculation, analysis failure persists nothing |
-| Errors and logs | `tests/backend/api/test_logging.py` | 14 | every response has `X-Request-ID`; error bodies carry it; 500s are generic but logged with a traceback; background analysis logs carry the request ID of `POST /analyze`; log setup is idempotent; JSON mode emits parseable records with event fields and tracebacks |
-| AI | `tests/ai/` | 47 | citation validation, grounding checks (invented values dropped), conflict detection, clarification templates, Ollama client errors/timeouts, evaluation metrics |
+| Errors and logs | `tests/backend/api/test_logging.py` | 15 | every response has `X-Request-ID`; error bodies carry it; 500s are generic but logged with a traceback; background analysis logs carry the request ID of `POST /analyze`; log setup is idempotent; JSON mode emits parseable records with event fields and tracebacks; the bare server URL points to the API docs |
+| AI | `tests/ai/` | 60 | citation validation, grounding checks (invented values dropped), conflict detection, clarification templates, Ollama client errors/timeouts, Groq client (provider selection, request shape, rate-limit waits, errors, health check), evaluation metrics |
 | Integration | `tests/integration/` | 17 | upload → analyze → review → recalculate; re-analysis; version comparison; edge cases (empty text, duplicates) |
 
 ## Frontend

@@ -1,7 +1,8 @@
 # AI Overview
 
 The AI layer (`ai/`) extracts and interprets contract information using **Qwen3-8B via
-Ollama**.
+Ollama** locally, or **Qwen (`qwen3.8-27b`) via Groq's API** in the online deployment. The
+provider is a setting (`LLM_PROVIDER`); everything after the model call is identical.
 
 AI output is not trusted blindly. It passes JSON Schema validation, citation grounding,
 business validation and confidence adjustment before the backend uses it. Conflicts,

@@ -2,7 +2,7 @@
 
 Summary only. The detailed design is in [docs/ai/](../ai/pipeline.md).
 
-- **Model:** Qwen3-8B via Ollama (local), used as a pretrained model with no training. Config: [../ai/model-config.md](../ai/model-config.md).
+- **Model:** Qwen3-8B via Ollama (local runs) or Qwen `qwen3.8-27b` via Groq (online deployment), selected by `LLM_PROVIDER`; pretrained, no training. Config: [../ai/model-config.md](../ai/model-config.md).
 - **Package:** `ai/`, called by `backend/services/analysis_service.py`. It has no database access.
 
 ## The model is responsible for

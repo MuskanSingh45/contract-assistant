@@ -35,34 +35,74 @@ No other AI tools were used. The product itself uses Qwen models (Qwen3-8B via O
 | PDF/DOCX/TXT parsers + tests | Claude sub-agent | Claude | Accepted; a bug found later (see below) |
 | JSON log format with named events (Q05) | Claude sub-agent | Claude: diff review, full test run, live server check | Accepted |
 | Client-side form validation (Q06) | Claude sub-agent | Claude: rules cross-checked against `ai/schemas/`, full test run | Accepted, with one deviation from the brief that was correct |
+| Groq provider, Render/Vercel deployment, live verification (Q09) | Claude (developer created the accounts and entered the API key) | Claude: 13 new tests, evaluation on Groq, live end-to-end analysis | Accepted |
 | Frontend TypeScript → JavaScript conversion (Q08) | Claude (mechanical type removal with Sucrase; types kept as JSDoc) | Claude: all 54 frontend tests, ESLint, build | Accepted |
 | Product scope, deadline, architecture decisions, stack choice, dropping Lovable, license, GitHub account | **Not delegated:** the developer | — | — |
 
 ## Representative prompts
 
-Prompts from the main session and the briefs given to sub-agents are quoted verbatim. Codex and the earliest Claude sessions worked from the task board: a task row (scope, dependencies, linked docs) plus the agent's role file served as the prompt. Those chat prompts were not saved, so they are not reproduced here.
+Two kinds of prompt drove the work:
 
-**Developer → Claude: a review against the grading criteria**
-> give me the status of the whole project on the basis of [the 10 grading criteria] … [the 5 requirements]
+- **Developer → Claude:** short chat instructions. They are shown below **edited for clarity and precision from the original chat messages**; each keeps the original intent, scope and constraints, and the outcome note says what happened.
+- **Claude → sub-agent:** written briefs. These are **quoted verbatim** (excerpts).
 
-Claude ran the tests and lint itself and rated each criterion with evidence and gaps, instead of repeating what the docs claimed.
+Codex and the earliest Claude sessions worked from the task board: a task row (scope, dependencies, linked docs) plus the agent's role file served as the prompt. Those chat sessions were not saved, so they are not reproduced.
 
-**Developer → Claude: scoping a quality pass**
-> work on the error handling and logs, testing of the FE, and update the docs correctly also responsible agent use and also work on the maintainability … after working on these things and making all the status strong we will work on the professional readiness, commits and deployment
+### Developer → Claude (edited for clarity)
 
-**Developer → Claude: delegation**
-> work on 1 and 2 for now if possible use codex or use your own sub agents
+**1. Audit against the grading rubric**
+> Assess the repository against the 10 grading criteria and the 5 hard requirements. For each, give a status (strong / partial / missing) backed by evidence you verify yourself: run the test suites and linters, inspect the code and git state, and do not rely on what the docs claim. List the gaps in priority order with an effort estimate.
 
-Codex was not available from that session, so Claude ran two sub-agents in parallel on non-overlapping files.
+*Outcome:* the audit found no git history, an empty LICENSE, no frontend tests, 40 lint findings and stale docs; these became tasks Q01–Q04.
 
-**Claude → sub-agent: JSON logs (excerpt of the brief)**
+**2. Quality pass, scoped to specific criteria**
+> Bring error handling and logging, frontend testing, documentation accuracy, responsible-agent-use evidence and maintainability to "strong". Keep the scope to those criteria: do not commit, and leave packaging and deployment for a later step. Every claim in the docs must match the code.
+
+*Outcome:* request-ID correlation, rotating logs, a frontend error boundary, 42 Vitest tests, a ruff/ESLint/Prettier baseline and reconciled docs (Q01–Q04).
+
+**3. Parallel delegation with isolation**
+> Close the two remaining gaps: (1) machine-readable JSON logs covering the AI workflow, and (2) client-side validation in the review forms. Delegate them to separate sub-agents running in parallel on non-overlapping paths, then review both diffs and re-run every check yourself before accepting them.
+
+*Outcome:* Codex was not reachable from that session, so two Claude sub-agents were used; both results were reviewed and re-verified (Q05–Q06).
+
+**4. Publish under the developer's identity**
+> Create a public GitHub repository under the MuskanSingh45 account and push a logical commit history (scaffolding → docs → db → backend → AI → frontend → tests). Author every commit as MuskanSingh45 using the GitHub no-reply address, scoped to this repo only, without changing the machine's global git identity. Verify the identity and run a secret scan before pushing.
+
+*Outcome:* nine commits, pushed only after the full suite passed in a fresh clone.
+
+**5. Stack change with a plan first**
+> Evaluate converting the frontend from TypeScript to JavaScript. Present the options, the plan, the risks and a time estimate before changing anything. Then carry out the chosen option without changing behaviour, and keep the API data shapes documented.
+
+*Outcome:* Option 1 (frontend only): Sucrase type-stripping, JSDoc typedefs, all tests green, and a styling regression caught in the browser (mistake 11).
+
+**6. Remove dead code, verify before deleting**
+> Find placeholder modules and empty directories that nothing imports or references. Remove them, and update every doc that still describes them.
+
+*Outcome:* `backend/models/`, four unused schema modules and redundant `.gitkeep` files removed; three docs corrected.
+
+**7. Free deployment under hard constraints**
+> Deploy the application on free tiers only, with no paid model API. The model must keep working when the developer's laptop is off. Research the current free-tier limits before choosing; do not rely on remembered pricing.
+
+*Outcome:* Hugging Face Docker Spaces turned out to need a paid plan (mistake 12). Final setup: Vercel (frontend), Render (backend) and Groq's free API (model), with a provider switch so local runs still use Ollama. Re-evaluated and verified end to end on the live services.
+
+**8. Keep every document consistent with the shipped system**
+> Update all documentation to match the current state: stack, deployment, model providers, test counts and limitations. Check the GitHub repository metadata as well.
+
+### Claude → sub-agent (verbatim excerpts)
+
+**JSON logs**
 > Add an opt-in structured (JSON lines) log format so application and AI-workflow logs are machine-readable. … A JSON formatter (stdlib only — no new dependency) emitting one JSON object per line with at least: `ts`, `level`, `logger`, `request_id`, `message` … Do not log full contract text or raw model responses (project rule). … Do NOT edit: anything under `frontend/`, `docs/`, `.ai/`, `README.md` (the parent agent updates docs). Another agent is concurrently editing frontend files.
 > **Report back:** files changed with a one-line summary each, the exact JSON field list and event names, test counts, ruff result, and 3 sample JSON log lines from the live check.
 
-**Claude → sub-agent: form validation (excerpt of the brief)**
+**Form validation**
 > Rules derived from the documented shapes / backend … mirror its rules, don't invent stricter ones that contradict it. … Show errors after the user has touched the field or tried to submit — not on first open. … component tests that an invalid edit … shows the message and does NOT call `api.review`.
 
-The pattern in every brief: the goal tied to a requirement, the files to read first, exact rules, paths the agent must not touch, the checks that must pass, and a defined report format.
+### What made the prompts work
+- **Goal tied to a requirement or criterion**, so the agent can judge "done".
+- **Explicit scope and non-goals** ("do not commit", "frontend only", owned paths).
+- **Verification built in:** run the tests, check identity, scan for secrets, re-run the sub-agent's checks.
+- **Plan before irreversible or large changes** (stack change, deployment, history rewrite).
+- **A defined report format** for sub-agents, so their results can be checked against the diff.
 
 ## Mistakes caught and suggestions rejected
 
@@ -91,7 +131,7 @@ Nothing was accepted on an agent's word alone:
 
 | Check | What it gives |
 |---|---|
-| `make test` | 130 backend/AI tests and 54 frontend tests, plus static checks (the TypeScript typecheck while the frontend was TypeScript, ESLint after the move to JavaScript). Re-run by the main session after every delegated task, not taken from the sub-agent's report |
+| `make test` | 144 backend/AI tests and 54 frontend tests, plus static checks (the TypeScript typecheck while the frontend was TypeScript, ESLint after the move to JavaScript). Re-run by the main session after every delegated task, not taken from the sub-agent's report |
 | `make lint` | ruff, ESLint and Prettier must be clean |
 | Cross-review | Every Codex and sub-agent result reviewed against the docs ([reviewer checklist](.ai/agents/reviewer.md)) |
 | `make eval` | Real-model accuracy against expected outputs for 5 contracts ([results](docs/testing/ai-evaluation.md)) |

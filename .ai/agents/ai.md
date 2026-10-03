@@ -14,6 +14,7 @@ def analyze(segments: list[Segment], *, on_progress: Callable[[str, int, int], N
 
 **Must:**
 - Set Ollama `format` = schema, `think=false`, `num_ctx` from env, `temperature=0`. Refuse prompts larger than 75% of `num_ctx`.
+- Groq (online): `json_schema` response format (non-strict), `temperature=0`, wait on HTTP 429 using `retry-after`, 2,500-token windows. New providers go behind `make_client()` and must pass `scripts/evaluate_ai.py`.
 - Validate against schema (one retry), then citations, then business rules, then adjust confidence (downgrade only).
 - Keep conflict detection and clarification text deterministic.
 - Version prompts (`# version:` header). Re-run the evaluation after every prompt or schema change.

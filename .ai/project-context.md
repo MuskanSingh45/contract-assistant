@@ -16,15 +16,17 @@ It is **not legal advice**.
 | AI | Qwen3-8B via Ollama (native) locally; Groq-hosted Qwen online (`LLM_PROVIDER=groq`); JSON Schema constrained output |
 | Dates | Python `datetime` + `dateutil`, in `backend/utils/dates.py` |
 
-## Status (2026-10-03, end of day)
+## Status (2026-10-03, night)
 | Area | State |
 |---|---|
 | Docs, API spec, DB schema + seed, AI schemas + prompts, samples | ✅ consistent with the code |
 | Backend, DB runner, parsers, AI pipeline, validators, date engine | ✅ working end to end with the real model |
 | Frontend | ✅ built in-repo, wired to the real API, verified in Chrome |
-| Tests and lint | ✅ `make test` (130 backend/AI + 54 frontend) and `make lint` pass |
+| Tests and lint | ✅ `make test` (144 backend/AI + 54 frontend) and `make lint` pass |
 | Error handling and logs | ✅ request IDs end to end, rotating log file ([backend logging](../docs/architecture/backend-architecture.md#logging)) |
-| Git history, deployment packaging | 🟡 next (see `tasks/current.md`) |
+| Git history | ✅ public repo github.com/MuskanSingh45/contract-assistant, MIT |
+| Deployment | ✅ live: Vercel (frontend), Render (backend), Groq (model) ([deployment](../docs/architecture/deployment.md)) |
+| Demo rehearsal | 🟡 developer |
 
 ## Non-negotiable rules
 1. **AI extracts; code decides.** The LLM never does date arithmetic, never supplies page numbers, never picks between conflicting clauses, and never writes clarification text.
