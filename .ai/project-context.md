@@ -13,7 +13,7 @@ It is **not legal advice**.
 | Backend | Python 3.11+, FastAPI, stdlib `sqlite3` (no ORM) |
 | DB | SQLite, `data/app.db`, schema in `db/migrations/` |
 | Documents | PyMuPDF, python-docx |
-| AI | Qwen3-8B via Ollama (native), JSON Schema constrained output |
+| AI | Qwen3-8B via Ollama (native) locally; Groq-hosted Qwen online (`LLM_PROVIDER=groq`); JSON Schema constrained output |
 | Dates | Python `datetime` + `dateutil`, in `backend/utils/dates.py` |
 
 ## Status (2026-10-03, end of day)

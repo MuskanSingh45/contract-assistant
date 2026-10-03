@@ -33,7 +33,7 @@ Order = critical path to the demo. Tasks marked ⭐ are required for the demo.
 | Q07 | | README (architecture, scope, tests, limitations, deployment) and root `AGENT_USAGE.md` (prompts, mistakes, verification) | Claude | Q04 | done | `README.md`, `AGENT_USAGE.md` |
 | Q08 | | Frontend converted from TypeScript to JavaScript (developer's stack choice); types kept as JSDoc typedefs | Claude | Q07 | done | `docs/decisions/008-frontend-language.md` |
 | P01 | | Git history, license, demo rehearsal | User | Q01–Q07 | in progress | history and MIT license pushed to github.com/MuskanSingh45/contract-assistant; demo rehearsal left |
-| P02 | | Deployment packaging and docs | — | P01 | todo | `docs/architecture/deployment.md` |
+| P02 | | Online deployment: frontend on Vercel, backend on Render, model on Groq (free tiers); live end-to-end analysis verified | Claude + developer (accounts) | P01 | done | `docs/architecture/deployment.md` |
 
 **Status 2026-10-03 night:** the end-to-end demo works with the real model (about 2 min per contract). A04 (evaluation), S01 (3 more samples) and T01 (17 integration tests, by Codex) are done. Fixed a parser bug: short numbered clauses were dropped as headings (regression test added).
 

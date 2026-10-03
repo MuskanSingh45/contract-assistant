@@ -16,7 +16,7 @@
 - Version tracking and comparison with the previous version
 
 ## MVP: simplified
-- Local deployment (three processes, no Docker)
+- Deployment: local (three processes) and online on free tiers (Vercel, Render, Groq); no Docker
 - Analysis in a FastAPI background task (no job queue)
 - Source drawer instead of a PDF viewer
 - Termination clauses: one-sentence summary only, with no termination date calculation
@@ -32,7 +32,6 @@
 
 ## Out of scope
 - Authentication, multi-user, RBAC
-- Cloud deployment
 - OCR (scanned PDFs fail with `NO_EXTRACTABLE_TEXT`)
 - Email/calendar integrations and reminders
 - Legal advice or legal interpretation

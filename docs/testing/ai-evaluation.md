@@ -49,9 +49,12 @@ Code: `ai/evaluation/metrics.py` (pure scoring, unit-tested in `tests/ai/evaluat
 |---|---|---|---|---|---|---|---|---|
 | 2026-10-03 run 1 | qwen3:8b, terms-v2+obligations-v2 | 90.9% | 3 | 8/10 | 1 | 5/5 | 5/5 | 100% |
 | 2026-10-03 run 2 (after grounding checks + fixture corrections) | same | **100%** | **0** | **9/9** | **0** | 5/5 | 5/5 | 100% |
+| 2026-10-03 run 3: **hosted model for the online deployment** (`LLM_PROVIDER=groq`) | qwen/qwen3.8-27b on Groq, same prompts | 97.1% | 1 | 9/9 | 0 | 5/5 | 5/5 | 100% |
 
 Run 1 errors: Meridian "every two weeks" was extracted as a 2-day notice period; Harbor "Customer **may** inspect" was extracted as an obligation. Both are now blocked by deterministic checks (docs/ai/pipeline.md §4). Two other flags were fixture mistakes: Acme's 30-day breach notice was a correct extraction, and Globex's termination summary was acceptable.
-Field and obligation recall were 100% in both runs. Average time was about 80 s per contract on an M1 Pro.
+Field and obligation recall were 100% in all runs. Average time was about 80 s per contract on an M1 Pro with Ollama, and 57–75 s on Groq's free tier (including waits for its per-minute token limit).
+
+Run 3's one unexpected value is not invented: Harbor's "Customer may inspect Provider's warehouse facilities upon ten (10) days' prior notice" was returned as a notice period with anchor `other`, with a verified quote. The fixture expects only the 60-day termination notice, so it is scored as unexpected. It cannot affect deadlines, because only renewal-anchored notice periods are used in date calculations. The fixture was left unchanged rather than adjusted to improve the score.
 
 Caveat: 5 short synthetic contracts. This shows the guards work; it does not prove accuracy on long real-world contracts.
 

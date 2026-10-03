@@ -8,7 +8,7 @@ silently.
 > Information-management tool. **Not legal advice.**
 
 **Status:** working end-to-end MVP: upload → AI extraction with verified citations →
-deterministic deadlines → human review.
+deterministic deadlines → human review. **Live demo: https://contract-assistant-flame.vercel.app**
 
 - **AI evaluation:** 100% precision and 0 invented values on the 5 sample contracts ([results and caveats](docs/testing/ai-evaluation.md)).
 - **Tests:** 130 backend/AI tests and 54 frontend tests, none of which need the model ([strategy](docs/testing/strategy.md)).
@@ -64,7 +64,7 @@ Browser ── React + JavaScript (Vite) ──HTTP/JSON──▶ FastAPI ──
 | API and services | Python 3.11+, FastAPI, Uvicorn, Pydantic | `backend/` |
 | Documents | PyMuPDF (PDF), python-docx (DOCX) | `backend/documents/` |
 | Data | SQLite via built-in `sqlite3` (no ORM); schema in SQL migrations | `db/` |
-| AI | Ollama + Qwen3-8B, JSON Schema output, grounding validators | `ai/` |
+| AI | Qwen3-8B via Ollama locally; Qwen (`qwen3.8-27b`) via Groq online; JSON Schema output, grounding validators | `ai/` |
 | Dates | Pure functions with unit tests | `backend/utils/dates.py` |
 | Tests and quality | pytest, Vitest + Testing Library, ruff, ESLint, Prettier | `tests/`, `frontend/src/**/*.test.*` |
 
@@ -95,7 +95,7 @@ decisions in [ADRs 001–008](docs/decisions/).
 | Recurring obligation schedules, holiday calendars | Next due date only; business days skip weekends only |
 | Email/calendar reminders | Out of scope |
 | Copying reviews to a new version | New version items start pending; old reviews stay on their version |
-| Docker, job queue | Three local processes and a FastAPI background task |
+| Docker, job queue | Local: three processes. Online: free managed hosts (Vercel, Render, Groq). Analysis runs as a FastAPI background task |
 
 Full list: [docs/product/scope.md](docs/product/scope.md).
 
@@ -114,8 +114,9 @@ quality is measured by `make eval`. Details: [testing strategy](docs/testing/str
 
 ## Limitations
 - **Accuracy is measured on 5 short synthetic contracts.** The results show the guards work; they do not prove accuracy on long, real-world contracts.
-- **Speed:** about 1–2 minutes per contract on an Apple M1 Pro; slower on machines without a GPU.
+- **Speed:** about 1–2 minutes per contract locally on an Apple M1 Pro; about 20–75 seconds online with Groq, plus up to a minute if the free backend was asleep.
 - **Text PDFs and DOCX only.** No OCR. PDF text blocks are read top to bottom, so a two-column layout can mix its columns; DOCX tables are read row by row.
+- **Online demo:** data resets on every restart, and uploaded text goes to Groq (see Deployment).
 - **Single user, single process.** No login. Analysis progress is held in memory, and a restart marks running analyses as failed (they can be re-run).
 - **Date rules are simplified:** weekends only (no holidays), next due date only, no termination date calculation.
 - **Manual-only checks:** the analysis progress page, the source drawer and the visual layout are tested by hand, not automatically.
@@ -123,21 +124,27 @@ quality is measured by `make eval`. Details: [testing strategy](docs/testing/str
 
 ## Deployment
 
-**Current state: runs locally only; not deployed online.** `make setup` and `make dev` start
-the three processes:
+**Live demo: https://contract-assistant-flame.vercel.app** (API: https://contract-assistant-api-4qba.onrender.com/docs)
 
-| Process | Command | Port |
+| Part | Host (free tier) | Config |
 |---|---|---|
-| Ollama + Qwen3-8B | `ollama serve` (native, not Docker: Docker on macOS has no GPU access) | 11434 |
-| Backend | `uvicorn backend.main:app` | 8000 |
-| Frontend | `npm run dev` in `frontend/` (production: `npm run build` → static `frontend/dist/`) | 5173 |
+| Frontend | **Vercel**, static build of `frontend/` | `frontend/vercel.json` (SPA routing); `VITE_API_BASE_URL` set in the Vercel project |
+| Backend API | **Render** free web service | [`render.yaml`](render.yaml) blueprint; deploys automatically on every push to `main` |
+| AI model | **Groq** free API, `qwen/qwen3.8-27b` (`LLM_PROVIDER=groq`) | `GROQ_API_KEY` set in the Render dashboard, never in git |
 
-What a hosted deployment needs:
-- **Frontend:** the static build from `npm run build`, with `VITE_API_BASE_URL` pointing at the backend.
-- **Backend:** one Python process. Set `FRONTEND_ORIGIN` to the frontend's URL and keep `DATABASE_PATH`, `UPLOAD_DIR` and `LOG_FILE` on persistent storage.
-- **Model:** an Ollama server with `qwen3:8b`, reachable through `OLLAMA_BASE_URL`. It needs about 16 GB of RAM, and a GPU for usable speed.
+No free host can run Qwen3-8B (it needs about 16 GB of RAM), so the online copy uses Groq's
+hosted Qwen model through the same pipeline, prompts, grounding checks and human review. Its
+evaluation: 100% recall, 97.1% precision, 0 invented values ([results](docs/testing/ai-evaluation.md)).
+A live analysis of the Acme sample took 21 s and produced the correct notice deadline.
 
-Hardware and configuration: [docs/architecture/deployment.md](docs/architecture/deployment.md).
+What to know about the online demo:
+- **First visit after a quiet period:** Render's free service sleeps after 15 minutes without traffic; the first request wakes it in about a minute.
+- **Data resets:** Render's free disk is not persistent, so each restart reloads the demo data (Acme and Globex). Uploads are temporary.
+- **Privacy:** contract text uploaded online is sent to Groq. Use only non-confidential documents such as `contracts/samples/`. Run locally (`make dev`, Ollama) to keep text on your machine.
+- **Limits:** Groq's free tier allows about 8,000 tokens per minute and 1,000 requests per day; the client waits and retries when it hits the per-minute limit.
+
+Local setup is unchanged: `make dev` runs Ollama, the backend and the frontend on your machine.
+How each part is configured and redeployed: [docs/architecture/deployment.md](docs/architecture/deployment.md).
 
 ## Logs and troubleshooting
 The backend logs to the console and to `data/logs/backend.log` (rotating). Every line has the

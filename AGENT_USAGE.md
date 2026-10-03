@@ -14,7 +14,7 @@ The agents' working files (shared context, rules, task board, task logs) are in 
 | **Codex** | First implementation of backend tasks B01–B09, database runner, integration tests, half of the frontend pages |
 | Lovable | Planned for the frontend; **dropped** because of the deadline ([ADR 008](docs/decisions/008-frontend-language.md)) |
 
-No other AI tools were used. The product itself uses a local model (Qwen3-8B via Ollama); that is part of the application, not a coding tool.
+No other AI tools were used. The product itself uses Qwen models (Qwen3-8B via Ollama locally, Qwen via Groq in the online demo); those are part of the application, not coding tools.
 
 ## How the work was organised
 
@@ -79,6 +79,8 @@ The pattern in every brief: the goal tied to a requirement, the files to read fi
 | 9 | A bulk find-and-replace of test counts also changed the numbers in an older task log, which records a past run | Claude | Checking the diff | Historical numbers restored |
 | 10 | Commits would have been authored with the machine's global git identity, not the developer's GitHub account | Environment | Checked before the first commit | Identity set for this repo only |
 | 11 | After the TypeScript → JavaScript conversion, all tests, lint and the build passed, but the app rendered with **no styling**: the Tailwind config still only scanned `.ts`/`.tsx` files for class names | Claude | Opening the app in Chrome after the automated checks | Tailwind globs changed to `.js`/`.jsx`; the app was rechecked page by page with no console errors. Shows why the manual browser check stays in the process |
+| 12 | Claude planned the free deployment on Hugging Face's free CPU Spaces, believing they accepted Docker. They now need a PRO subscription for Docker Spaces | Claude (outdated knowledge) | The Space creation was refused with HTTP 402 | Nothing was created; the untested Dockerfile was removed. Free tiers were then checked on the web before choosing again |
+| 13 | The research found Groq serving Qwen3-32B, but the live model list showed `qwen/qwen3.8-27b` instead | Web sources (out of date) | Calling Groq's `/models` with the account's key before writing any code | Built against the model that actually exists, then re-ran the evaluation on it |
 | R1 | **Rejected:** `npm audit fix --force`, which upgrades React Router to v7 (breaking) the day before the deadline | Tool suggestion | Advisory reviewed: not exploitable here (links only to server IDs) | Deferred and documented; v7 behaviour flags turned on |
 | R2 | **Rejected:** deleting the `# noqa: BLE001` comments that ruff reported as unused | Linter suggestion | The comments showed blind-except checks were intended | The `BLE` rule was enabled instead, so the comments now do their job |
 | R3 | **Dropped:** the frontend mock-data mode from the original plan | Original plan | The frontend was built against the running backend | Docs that still described it were corrected |
@@ -109,7 +111,7 @@ The rule for the coding agents also applies to the model in the app: **the model
 - The model never does date arithmetic, never picks between conflicting clauses and never writes the questions shown to users ([ADR 007](docs/decisions/007-deterministic-conflicts-and-citations.md)).
 - Every value needs a verbatim quote found in the document, or it is dropped. Missing information stays empty instead of being guessed.
 - A person can approve, edit or reject every value, the original AI value is kept, and conflicts block deadlines until resolved.
-- The model runs locally, so contract text is not sent to a third-party AI service. The app states it is not legal advice.
+- Run locally, the model runs on the user's machine and contract text stays there. The online demo uses Groq's hosted API because no free host can run the model; the Help page and README say so, and only synthetic sample contracts are meant to be uploaded there. The Groq key lives only in `.env` and the Render dashboard. The app states it is not legal advice.
 
 ## Data and secrets
 - The sample contracts are synthetic; no real or confidential documents were given to any agent.
