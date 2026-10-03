@@ -8,7 +8,7 @@ from collections.abc import Callable
 
 from rapidfuzz import fuzz
 
-from ai.llm.client import LLMClient, make_client
+from ai.llm.client import LLMClient, active_config, make_client
 from ai.llm.model_config import estimate_tokens, load_config
 from ai.llm.structured_output import load_prompt
 from ai.pipeline import extraction, obligation_extraction
@@ -131,7 +131,8 @@ def analyze(
     Raises ai.errors.AIUnavailable / AITimeout / InvalidAIOutput.
     """
     started = time.monotonic()
-    config = load_config()
+    # The active provider (primary, or the fallback when the primary is down) also sets the window size.
+    config = active_config() if client is None else load_config()
     client = client or make_client(config)
     version = prompt_version()
     stats = {

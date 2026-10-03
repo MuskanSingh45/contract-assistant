@@ -11,7 +11,7 @@ silently.
 deterministic deadlines → human review. **Live demo: https://contract-assistant-flame.vercel.app**
 
 - **AI evaluation:** 100% precision and 0 invented values on the 5 sample contracts ([results and caveats](docs/testing/ai-evaluation.md)).
-- **Tests:** 144 backend/AI tests and 54 frontend tests, none of which need the model ([strategy](docs/testing/strategy.md)).
+- **Tests:** 158 backend/AI tests and 56 frontend tests, none of which need the model ([strategy](docs/testing/strategy.md)).
 - **How AI coding agents were used:** [AGENT_USAGE.md](AGENT_USAGE.md).
 
 ## Setup
@@ -28,7 +28,7 @@ Open http://localhost:5173. API docs are at http://localhost:8000/docs.
 
 | Command | What it does |
 |---|---|
-| `make test` | 144 backend/AI tests (pytest) + 54 frontend tests (Vitest) + frontend ESLint. No model needed |
+| `make test` | 158 backend/AI tests (pytest) + 56 frontend tests (Vitest) + frontend ESLint. No model needed |
 | `make lint` | ruff lint/format check, ESLint, Prettier check (`make fmt` fixes) |
 | `make eval` | real-model evaluation on the 5 sample contracts (about 7 min) |
 | `make reset` | restore the demo data (Acme clean, Globex with an open conflict) |
@@ -50,6 +50,20 @@ Browser ── React + JavaScript (Vite) ──HTTP/JSON──▶ FastAPI ──
 
 **AI extracts; code validates, calculates and decides.**
 
+**Which model runs where**
+
+| Where | Main model | Fallback |
+|---|---|---|
+| Live website | Groq API, `qwen/qwen3.8-27b` | none needed: always reachable |
+| Local (`make dev`) | Ollama on your machine, `qwen3:8b` | Groq, only if `LLM_FALLBACK_PROVIDER=groq` is set and Ollama is down |
+
+The provider is chosen per analysis by `active_config()`; prompts, schemas, grounding checks and
+review are identical for both ([model config](docs/ai/model-config.md)).
+
+**Private workspaces (live website):** each browser gets its own workspace with its own database
+and its own copy of the demo contracts. Uploads and review decisions are never visible to other
+visitors ([ADR 009](docs/decisions/009-workspace-isolation.md)).
+
 1. **Upload:** the file's type, signature and size are checked, the file is stored, and a contract version is created.
 2. **Analyze** (background task, polled by the UI):
    - **Parse:** PDF/DOCX → page- and section-aware text segments.
@@ -70,7 +84,7 @@ Browser ── React + JavaScript (Vite) ──HTTP/JSON──▶ FastAPI ──
 
 Details: [architecture](docs/architecture/overview.md), [data flow](docs/architecture/data-flow.md),
 [AI pipeline](docs/ai/pipeline.md), [prompt design](docs/ai/prompts.md), [API](docs/api/api-contract.md), [schema](docs/database/schema.md),
-decisions in [ADRs 001–008](docs/decisions/).
+decisions in [ADRs 001–009](docs/decisions/).
 
 ## Scope
 
@@ -103,10 +117,10 @@ Full list: [docs/product/scope.md](docs/product/scope.md).
 
 | Suite | Count | Covers |
 |---|---|---|
-| Backend (pytest) | 67 | date engine, parsers, API endpoints, errors and logging (request IDs, JSON log events) |
-| AI (pytest) | 60 | citation validation, grounding, conflicts, clarification templates, Ollama and Groq clients (provider selection, rate-limit retries, errors, timeouts), evaluation metrics |
+| Backend (pytest) | 77 | date engine, parsers, API endpoints, errors and logging (request IDs, JSON log events), workspace isolation and rate limits |
+| AI (pytest) | 64 | citation validation, grounding, conflicts, clarification templates, Ollama and Groq clients (provider selection, fallback, rate-limit retries, errors, timeouts), evaluation metrics |
 | Integration (pytest) | 17 | upload → analyze → review → recalculate; re-analysis; versions; edge cases |
-| Frontend (Vitest) | 54 | API client errors, hooks, error states, form validation, review actions, conflict resolution, upload and contracts pages |
+| Frontend (Vitest) | 56 | API client errors, hooks, error states, form validation, review actions, conflict resolution, upload and contracts pages |
 | AI evaluation (`make eval`; `LLM_PROVIDER=groq` for the hosted model) | 5 contracts | precision, invented values, missing information, conflicts, dates, citations against expected outputs |
 
 The default suite uses a scripted fake model and never calls Ollama or Groq, so it runs in seconds offline. Model
@@ -116,7 +130,7 @@ quality is measured by `make eval`. Details: [testing strategy](docs/testing/str
 - **Accuracy is measured on 5 short synthetic contracts.** The results show the guards work; they do not prove accuracy on long, real-world contracts.
 - **Speed:** about 1–2 minutes per contract locally on an Apple M1 Pro; about 20–75 seconds online with Groq, plus up to a minute if the free backend was asleep.
 - **Text PDFs and DOCX only.** No OCR. PDF text blocks are read top to bottom, so a two-column layout can mix its columns; DOCX tables are read row by row.
-- **Online demo:** data resets on every restart, and uploaded text goes to Groq (see Deployment).
+- **Online demo:** data resets on every restart, and uploaded text goes to Groq (see Deployment). A workspace belongs to one browser: clearing its storage, or another device, starts a fresh one.
 - **Single user, single process.** No login. Analysis progress is held in memory, and a restart marks running analyses as failed (they can be re-run).
 - **Date rules are simplified:** weekends only (no holidays), next due date only, no termination date calculation.
 - **Manual-only checks:** the analysis progress page, the source drawer and the visual layout are tested by hand, not automatically.
@@ -141,7 +155,14 @@ What to know about the online demo:
 - **First visit after a quiet period:** Render's free service sleeps after 15 minutes without traffic; the first request wakes it in about a minute.
 - **Data resets:** Render's free disk is not persistent, so each restart reloads the demo data (Acme and Globex). Uploads are temporary.
 - **Privacy:** contract text uploaded online is sent to Groq. Use only non-confidential documents such as `contracts/samples/`. Run locally (`make dev`, Ollama) to keep text on your machine.
-- **Limits:** Groq's free tier allows about 8,000 tokens per minute and 1,000 requests per day; the client waits and retries when it hits the per-minute limit.
+- **Limits:** Groq's free tier allows about 8,000 tokens per minute and 1,000 requests per day; the client waits and retries when it hits the per-minute limit. To protect that quota, each address can start at most 20 analyses per hour.
+- **Private workspaces:** uploads and reviews are visible only in the browser that made them (Settings → *Your workspace*).
+
+## Security
+No secrets are in the repository (the Groq key lives only in `.env` and the Render dashboard).
+Visitors are isolated by workspace (one database each); uploads are checked by type, signature
+and size before they are read; analyses and new workspaces are rate-limited; errors never expose
+internals. Full list: [backend security](docs/architecture/backend-architecture.md#security).
 
 Local setup is unchanged: `make dev` runs Ollama, the backend and the frontend on your machine.
 How each part is configured and redeployed: [docs/architecture/deployment.md](docs/architecture/deployment.md).

@@ -140,3 +140,15 @@ def test_evidence_from_other_window_is_discarded(monkeypatch):
     client = FakeClient(terms=[terms(expiration_date=[cand(exp, "S2", "Expires on January 31, 2027")])])
     result = analyze([SEG, seg2], client=client)
     assert result.items == [] and result.stats["dropped_unsupported"] == 1
+
+
+def test_analyze_without_a_client_uses_the_active_provider(monkeypatch):
+    """The production path (no injected client) picks the provider via active_config()."""
+    from ai.llm.model_config import load_config
+    from ai.pipeline import orchestrator
+
+    chosen = []
+    monkeypatch.setattr(orchestrator, "active_config", lambda: chosen.append(1) or load_config())
+    monkeypatch.setattr(orchestrator, "make_client", lambda config: FakeClient([]))
+    orchestrator.analyze([])
+    assert chosen == [1]

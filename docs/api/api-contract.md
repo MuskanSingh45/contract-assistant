@@ -19,7 +19,8 @@ docs. If they disagree, fix whichever one is wrong in the same change.
 | Timestamps | ISO-8601 UTC, e.g. `2026-10-03T10:00:00Z`. |
 | Missing values | `null`. Never an empty string or a placeholder date. |
 | Lists | `{"items": [...]}`. No pagination for the MVP. |
-| Errors | `{"error": {"code", "message", "details"}}`. See [errors.md](errors.md). |
+| Errors | `{"error": {"code", "message", "details", "request_id"}}`. See [errors.md](errors.md). |
+| Workspace | Every request carries `X-Workspace-ID: ws_<random>` (the frontend adds it). On the public deployment each workspace has its own data; resources from another workspace answer `*_NOT_FOUND`. Without the header the default (shared) database is used. Locally the header is ignored. [ADR 009](../decisions/009-workspace-isolation.md) |
 | Calculated values | Every date the backend calculates (notice deadline, current term end, calculated due dates, `days_until_*`) comes from the API. The frontend only formats it and never calculates it. |
 | Version scope | Contract-level and cross-contract endpoints use the **latest version** of each contract unless a `version_id` is passed. |
 | Auth | None (out of scope for the MVP). |
@@ -97,10 +98,19 @@ These objects appear in several responses. Resource docs reference them by name.
 {
   "status": "ok",
   "database": "ok",
-  "llm": { "provider": "ollama", "model": "qwen3:8b", "reachable": true, "model_available": true }
+  "llm": {
+    "provider": "ollama",
+    "primary": "ollama",
+    "fallback": "groq",
+    "model": "qwen3:8b",
+    "reachable": true,
+    "model_available": true
+  }
 }
 ```
 
-`llm.provider` is `ollama` (local) or `groq` (hosted; the online deployment).
+`llm.provider` is the service in use right now: the `primary` (`LLM_PROVIDER`), or the
+`fallback` (`LLM_FALLBACK_PROVIDER`, `null` if none) when the primary is unavailable. The
+online deployment uses `groq` as primary with no fallback.
 `status` is `degraded` when the AI service is unreachable or the model is not available. Uploading and
 browsing still work in that state; starting an analysis fails with `AI_UNAVAILABLE`.

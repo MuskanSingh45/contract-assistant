@@ -1,5 +1,6 @@
 import { useApi } from "@/lib/useApi";
-import { api } from "@/lib/api";
+import { api, resetWorkspace, workspaceId } from "@/lib/api";
+import { Button } from "@/components/ui/Button";
 import { PageHeader, Card } from "@/components/ui/Card";
 import { StatusBadge } from "@/components/ui/Badge";
 import { Async, TableSkeleton } from "@/components/ui/States";
@@ -34,7 +35,18 @@ export default function Settings() {
               </p>
               <p>
                 Model <b>{h.llm.model}</b>
+                {h.llm.provider !== h.llm.primary && (
+                  <span className="text-slate">
+                    {" "}
+                    (fallback: {PROVIDER_LABEL[h.llm.primary] ?? h.llm.primary} is unavailable)
+                  </span>
+                )}
               </p>
+              {h.llm.fallback && h.llm.provider === h.llm.primary && (
+                <p className="text-slate">
+                  Fallback if unavailable: {PROVIDER_LABEL[h.llm.fallback] ?? h.llm.fallback}
+                </p>
+              )}
               <p>
                 Model available{" "}
                 <StatusBadge
@@ -42,6 +54,22 @@ export default function Settings() {
                   label={h.llm.model_available ? "Available" : "Unavailable"}
                 />
               </p>
+            </Card>
+            <Card className="space-y-3 p-5">
+              <h2 className="text-section">Your workspace</h2>
+              <p className="text-body text-slate">
+                On the online demo, your uploads and review decisions are kept in a private workspace tied to this
+                browser. Other visitors cannot see or change them. It starts with its own copy of the demo contracts.
+              </p>
+              <p className="font-mono text-meta text-slate">{workspaceId()}</p>
+              <Button
+                onClick={() => {
+                  resetWorkspace();
+                  window.location.assign("/dashboard");
+                }}
+              >
+                Start a fresh workspace
+              </Button>
             </Card>
           </div>
         )}

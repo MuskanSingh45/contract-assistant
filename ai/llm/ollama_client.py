@@ -79,9 +79,9 @@ def _with_no_think(message: dict[str, str]) -> dict[str, str]:
     return {**message, "content": f"{message['content']}\n{NO_THINK}"}
 
 
-def check_available() -> tuple[bool, bool]:
+def check_available(config: ModelConfig | None = None) -> tuple[bool, bool]:
     """(reachable, model_available) via GET /api/tags with a 3s timeout. Never raises."""
-    config = load_config()
+    config = config or load_config("ollama")
     try:
         response = httpx.get(f"{config.base_url}/api/tags", timeout=3.0)
         response.raise_for_status()

@@ -22,6 +22,11 @@ class Settings:
         default_factory=lambda: _list(os.getenv("FRONTEND_ORIGIN", "http://localhost:5173,http://localhost:8080"))
     )
     upcoming_window_days: int = int(os.getenv("UPCOMING_WINDOW_DAYS", "60"))
+    # Public deployment: one database per browser workspace (backend/core/workspace.py).
+    workspaces: bool = os.getenv("WORKSPACES", "false").strip().lower() in ("1", "true", "yes")
+    workspace_dir: str = os.getenv("WORKSPACE_DIR", "data/workspaces")
+    max_new_workspaces_per_hour: int = int(os.getenv("MAX_NEW_WORKSPACES_PER_HOUR", "30"))
+    max_analyses_per_hour: int = int(os.getenv("MAX_ANALYSES_PER_HOUR", "20"))
     log_level: str = os.getenv("LOG_LEVEL", "INFO")
     # Empty disables the file log (console only).
     log_file: str = os.getenv("LOG_FILE", "data/logs/backend.log")

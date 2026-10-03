@@ -299,7 +299,7 @@
  * @typedef {Object} Health
  * @property {"ok" | "degraded"} status
  * @property {string} database
- * @property {{ provider: "ollama" | "groq", model: string, reachable: boolean, model_available: boolean }} llm
+ * @property {{ provider: "ollama" | "groq", primary: "ollama" | "groq", fallback: "ollama" | "groq" | null, model: string, reachable: boolean, model_available: boolean }} llm
  */
 
 export {};

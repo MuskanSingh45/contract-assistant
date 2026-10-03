@@ -8,3 +8,4 @@ os.environ["DATABASE_PATH"] = str(_TMP / "test.db")
 os.environ["UPLOAD_DIR"] = str(_TMP / "uploads")
 os.environ["LOG_FILE"] = ""
 os.environ["LLM_PROVIDER"] = "ollama"  # tests never use a hosted model, whatever .env says
+os.environ["LLM_FALLBACK_PROVIDER"] = ""  # and never fall back to it

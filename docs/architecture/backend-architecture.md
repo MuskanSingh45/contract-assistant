@@ -103,6 +103,27 @@ jq -c 'select(.request_id=="req_4867b604f76e") | {ts, event, status, error_code,
 
 Debugging a failure: take the **Reference** shown in the UI (or the `X-Request-ID` header) and run `grep req_xxx data/logs/backend.log`.
 
+## Workspaces (public deployment)
+With `WORKSPACES=true`, each browser's `X-Workspace-ID` selects its own SQLite file in
+`WORKSPACE_DIR`, created on first use with the migrations and a copy of the demo data
+(`backend/core/workspace.py`, [ADR 009](../decisions/009-workspace-isolation.md)). `get_db`
+opens that file for every request; the analyze endpoint passes the workspace to the background
+task, which opens the same file. Startup marks interrupted analyses as failed in every
+workspace database. Locally the setting is off and `data/app.db` is used.
+
+## Security
+| Concern | Control |
+|---|---|
+| One visitor reading or changing another's data | One database per workspace; IDs from another workspace resolve to `*_NOT_FOUND` |
+| Path tricks through the workspace ID | Strict format `ws_[A-Za-z0-9_-]{16,64}`, else `INVALID_WORKSPACE` (400) |
+| Oversized uploads filling memory or disk | `UploadSizeLimitMiddleware` rejects by `Content-Length` before the body is read; the service checks the exact size |
+| Malicious files | Extension and file-signature check (PDF/DOCX only); file names sanitized; stored paths never returned by the API |
+| Exhausting the model's free quota or the host | Per-address limits on new workspaces and per-address and per-workspace limits on analyses (`RATE_LIMITED`, 429) |
+| Secrets | `GROQ_API_KEY` only in `.env` (git-ignored) or the host's dashboard; read only by `ai/llm/groq_client.py`; never logged or returned (`/api/health` shows provider and model only) |
+| Cross-site calls | CORS allows only the configured frontend origin and localhost |
+| Error details | Unexpected errors return a generic message and a request ID; the traceback stays in the server log |
+| SQL injection | Parameterized queries only |
+
 ## CORS
 Allow `FRONTEND_ORIGIN` (default `http://localhost:5173,http://localhost:8080`) and any
 `localhost`/`127.0.0.1` port. `X-Request-ID` is exposed to the browser.

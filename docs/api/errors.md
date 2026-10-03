@@ -34,7 +34,7 @@ shows it as **Reference** on error screens. Logging details: [backend architectu
 | `VALIDATION_ERROR` | 422 | Request body/query does not match the documented shape |
 | `INVALID_DOCUMENT` | 415 | Not a PDF/DOCX (by extension or file signature) |
 | `EMPTY_UPLOAD` | 400 | No file, or 0-byte file |
-| `FILE_TOO_LARGE` | 413 | Larger than `MAX_UPLOAD_MB` |
+| `FILE_TOO_LARGE` | 413 | Larger than `MAX_UPLOAD_MB` (rejected from `Content-Length` before the body is read, or by exact size) |
 | `DUPLICATE_VERSION` | 409 | New version has the same file hash as the latest version |
 | `CONTRACT_NOT_FOUND` | 404 | |
 | `VERSION_NOT_FOUND` | 404 | |
@@ -46,7 +46,9 @@ shows it as **Reference** on error screens. Logging details: [backend architectu
 | `INVALID_REVIEW_ACTION` | 400 | Unknown action, or `value` missing/present incorrectly |
 | `ANALYSIS_IN_PROGRESS` | 409 | Analyze requested while the version is `queued`/`processing` |
 | `ANALYSIS_NOT_COMPLETE` | 409 | Requesting results that need a completed analysis |
-| `AI_UNAVAILABLE` | 503 | Ollama unreachable or model not pulled |
+| `AI_UNAVAILABLE` | 503 | The AI service (Ollama, or Groq online) is unreachable or the model is not available |
+| `INVALID_WORKSPACE` | 400 | `X-Workspace-ID` is malformed (public deployment) |
+| `RATE_LIMITED` | 429 | Too many new workspaces from one address, or too many analyses per hour (public deployment) |
 | `NOT_FOUND` | 404 | Unknown route |
 | `METHOD_NOT_ALLOWED` | 405 | Known route, wrong HTTP method |
 | `INTERNAL_ERROR` | 500 | Unexpected. The message is generic; the traceback is in the server log only, under the `request_id`. |

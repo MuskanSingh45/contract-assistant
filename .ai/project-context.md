@@ -22,10 +22,10 @@ It is **not legal advice**.
 | Docs, API spec, DB schema + seed, AI schemas + prompts, samples | ✅ consistent with the code |
 | Backend, DB runner, parsers, AI pipeline, validators, date engine | ✅ working end to end with the real model |
 | Frontend | ✅ built in-repo, wired to the real API, verified in Chrome |
-| Tests and lint | ✅ `make test` (144 backend/AI + 54 frontend) and `make lint` pass |
+| Tests and lint | ✅ `make test` (158 backend/AI + 56 frontend) and `make lint` pass |
 | Error handling and logs | ✅ request IDs end to end, rotating log file ([backend logging](../docs/architecture/backend-architecture.md#logging)) |
 | Git history | ✅ public repo github.com/MuskanSingh45/contract-assistant, MIT |
-| Deployment | ✅ live: Vercel (frontend), Render (backend), Groq (model) ([deployment](../docs/architecture/deployment.md)) |
+| Deployment | ✅ live: Vercel (frontend), Render (backend), Groq (model) ([deployment](../docs/architecture/deployment.md)); private workspace per browser ([ADR 009](../docs/decisions/009-workspace-isolation.md)) |
 | Demo rehearsal | 🟡 developer |
 
 ## Non-negotiable rules
@@ -49,7 +49,7 @@ It is **not legal advice**.
 | Date rules | `docs/architecture/date-calculation.md` |
 | AI pipeline | `docs/ai/pipeline.md` |
 | Demo data | `db/seeds/development.sql` (Acme = clean; Globex = conflict) |
-| Decisions | `docs/decisions/` ADR 001–008 |
+| Decisions | `docs/decisions/` ADR 001–009 |
 
 ## Do NOT build (MVP)
 Auth/users, OCR, Docker, cloud deploy, email/calendar, AI summarization, LLM-based conflict

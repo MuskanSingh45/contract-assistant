@@ -12,7 +12,6 @@ The agents' working files (shared context, rules, task board, task logs) are in 
 | **Claude Code** (Claude, main session) | Docs and contract reconciliation, AI pipeline, evaluation, frontend foundation and review screens, reviewing all other agents' work, reworking the backend, quality pass (errors and logs, tests, lint, docs), git history |
 | **Claude sub-agents** (spawned by Claude Code) | Bounded tasks with a written brief: date engine, document parsers, parts of the AI pipeline, JSON logs, form validation |
 | **Codex** | First implementation of backend tasks B01–B09, database runner, integration tests, half of the frontend pages |
-| Lovable | Planned for the frontend; **dropped** because of the deadline ([ADR 008](docs/decisions/008-frontend-language.md)) |
 
 No other AI tools were used. The product itself uses Qwen models (Qwen3-8B via Ollama locally, Qwen via Groq in the online demo); those are part of the application, not coding tools.
 
@@ -35,9 +34,10 @@ No other AI tools were used. The product itself uses Qwen models (Qwen3-8B via O
 | PDF/DOCX/TXT parsers + tests | Claude sub-agent | Claude | Accepted; a bug found later (see below) |
 | JSON log format with named events (Q05) | Claude sub-agent | Claude: diff review, full test run, live server check | Accepted |
 | Client-side form validation (Q06) | Claude sub-agent | Claude: rules cross-checked against `ai/schemas/`, full test run | Accepted, with one deviation from the brief that was correct |
+| Per-browser workspaces, security hardening, Groq fallback (Q10) | Claude | Claude: 14 new backend tests, 2 frontend tests, lint, live isolation check | Accepted |
 | Groq provider, Render/Vercel deployment, live verification (Q09) | Claude (developer created the accounts and entered the API key) | Claude: 13 new tests, evaluation on Groq, live end-to-end analysis | Accepted |
 | Frontend TypeScript → JavaScript conversion (Q08) | Claude (mechanical type removal with Sucrase; types kept as JSDoc) | Claude: all 54 frontend tests, ESLint, build | Accepted |
-| Product scope, deadline, architecture decisions, stack choice, dropping Lovable, license, GitHub account | **Not delegated:** the developer | — | — |
+| Product scope, deadline, architecture decisions, stack choice, license, GitHub account | **Not delegated:** the developer | — | — |
 
 ## Representative prompts
 
@@ -88,6 +88,11 @@ Codex and the earliest Claude sessions worked from the task board: a task row (s
 **8. Keep every document consistent with the shipped system**
 > Update all documentation to match the current state: stack, deployment, model providers, test counts and limitations. Check the GitHub repository metadata as well.
 
+**9. Isolation, security review and model routing**
+> Make the public deployment multi-tenant without accounts: one visitor must never see or change another visitor's uploads or reviews. Audit the repository and the running services for exposed secrets and abuse paths. Make Groq the primary model online and an optional fallback locally when Ollama is down. Reset the local demo data and update every document.
+
+*Outcome:* one SQLite database per browser workspace (ADR 009) with 10 isolation tests; upload-size and rate limits; a clean secret scan of the whole history; `LLM_FALLBACK_PROVIDER`; docs updated.
+
 ### Claude → sub-agent (verbatim excerpts)
 
 **JSON logs**
@@ -121,6 +126,8 @@ Codex and the earliest Claude sessions worked from the task board: a task row (s
 | 11 | After the TypeScript → JavaScript conversion, all tests, lint and the build passed, but the app rendered with **no styling**: the Tailwind config still only scanned `.ts`/`.tsx` files for class names | Claude | Opening the app in Chrome after the automated checks | Tailwind globs changed to `.js`/`.jsx`; the app was rechecked page by page with no console errors. Shows why the manual browser check stays in the process |
 | 12 | Claude planned the free deployment on Hugging Face's free CPU Spaces, believing they accepted Docker. They now need a PRO subscription for Docker Spaces | Claude (outdated knowledge) | The Space creation was refused with HTTP 402 | Nothing was created; the untested Dockerfile was removed. Free tiers were then checked on the web before choosing again |
 | 13 | The research found Groq serving Qwen3-32B, but the live model list showed `qwen/qwen3.8-27b` instead | Web sources (out of date) | Calling Groq's `/models` with the account's key before writing any code | Built against the model that actually exists, then re-ran the evaluation on it |
+| 14 | The orchestrator called `active_config()` without importing it; all tests still passed because every test injects a fake client, so that line never ran | Claude | `ruff` (undefined name) | Import fixed, and a test added for the production path (no injected client) |
+| 15 | The first fallback check temporarily rewrote the process-wide `LLM_PROVIDER` to test the other provider, which is unsafe with concurrent requests | Claude | Self-review before running the tests | Replaced by passing each provider's config to its availability check |
 | R1 | **Rejected:** `npm audit fix --force`, which upgrades React Router to v7 (breaking) the day before the deadline | Tool suggestion | Advisory reviewed: not exploitable here (links only to server IDs) | Deferred and documented; v7 behaviour flags turned on |
 | R2 | **Rejected:** deleting the `# noqa: BLE001` comments that ruff reported as unused | Linter suggestion | The comments showed blind-except checks were intended | The `BLE` rule was enabled instead, so the comments now do their job |
 | R3 | **Dropped:** the frontend mock-data mode from the original plan | Original plan | The frontend was built against the running backend | Docs that still described it were corrected |
@@ -131,7 +138,7 @@ Nothing was accepted on an agent's word alone:
 
 | Check | What it gives |
 |---|---|
-| `make test` | 144 backend/AI tests and 54 frontend tests, plus static checks (the TypeScript typecheck while the frontend was TypeScript, ESLint after the move to JavaScript). Re-run by the main session after every delegated task, not taken from the sub-agent's report |
+| `make test` | 158 backend/AI tests and 56 frontend tests, plus static checks (the TypeScript typecheck while the frontend was TypeScript, ESLint after the move to JavaScript). Re-run by the main session after every delegated task, not taken from the sub-agent's report |
 | `make lint` | ruff, ESLint and Prettier must be clean |
 | Cross-review | Every Codex and sub-agent result reviewed against the docs ([reviewer checklist](.ai/agents/reviewer.md)) |
 | `make eval` | Real-model accuracy against expected outputs for 5 contracts ([results](docs/testing/ai-evaluation.md)) |
@@ -142,7 +149,7 @@ Nothing was accepted on an agent's word alone:
 
 ## What stayed with the developer
 - Scope, priorities and the deadline; what is in the MVP and what is excluded.
-- Architecture decisions (ADRs 001–008), dropping Lovable, and moving the frontend from TypeScript to JavaScript.
+- Architecture decisions (ADRs 001–009), including building the frontend in this repo and moving it from TypeScript to JavaScript.
 - The GitHub account, repository and license. Commits and pushes happened only on the developer's explicit instruction.
 - The final demo.
 

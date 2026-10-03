@@ -1,6 +1,7 @@
 # Render Blueprint: the backend API on Render's free web service.
 # The model runs on Groq (LLM_PROVIDER=groq); GROQ_API_KEY is entered in the Render dashboard, never here.
 # Render's free disk is not persistent, so every start reloads the demo data (Acme, Globex).
+# WORKSPACES=true: each browser gets its own database with its own demo copy (backend/core/workspace.py).
 services:
   - type: web
     name: contract-assistant-api
@@ -17,6 +18,8 @@ services:
         value: production
       - key: FRONTEND_ORIGIN
         value: https://contract-assistant-flame.vercel.app
+      - key: WORKSPACES
+        value: "true"
       - key: LLM_PROVIDER
         value: groq
       - key: GROQ_MODEL

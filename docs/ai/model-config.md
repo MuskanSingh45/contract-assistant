@@ -11,10 +11,22 @@ Two providers behind the same client interface (`ai/llm/client.py`, `make_client
 
 The pipeline, prompts, schemas, grounding checks and review flow are identical for both.
 
+### Which provider runs: primary and fallback
+
+| Where | Primary (`LLM_PROVIDER`) | Fallback (`LLM_FALLBACK_PROVIDER`) |
+|---|---|---|
+| **Live website** (Render) | `groq`: the main and only model | none |
+| **Local** (`make dev`) | `ollama` on your machine | optional `groq`: used only while Ollama is down or the model is missing (needs `GROQ_API_KEY`) |
+
+`active_config()` (`ai/llm/client.py`) checks the primary first and switches to the fallback
+only if the primary is unreachable and the fallback is available; the switch is logged as
+`llm.fallback`. The health endpoint and the Settings page show which one is active.
+
 ## Environment
 
 ```env
 LLM_PROVIDER=ollama
+LLM_FALLBACK_PROVIDER=              # optional: groq
 OLLAMA_BASE_URL=http://localhost:11434
 OLLAMA_MODEL=qwen3:8b
 OLLAMA_NUM_CTX=16384

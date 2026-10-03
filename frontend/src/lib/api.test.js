@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { jsonResponse } from "@/test/render";
-import { api, ApiError, errorMessage } from "./api";
+import { api, ApiError, errorMessage, resetWorkspace, workspaceId } from "./api";
 
 function stubFetch(impl) {
   const fetchMock = vi.fn(impl);
@@ -108,7 +108,7 @@ describe("api client", () => {
     const form = init.body;
     expect(form.get("name")).toBe("Acme");
     expect(form.get("file").name).toBe("a.pdf");
-    expect(init.headers).toBeUndefined();
+    expect(init.headers.get("Content-Type")).toBeNull(); // the browser sets the multipart boundary
   });
 });
 
@@ -117,5 +117,24 @@ describe("errorMessage", () => {
     expect(errorMessage(new ApiError("X", "Readable message", 400))).toBe("Readable message");
     expect(errorMessage(new Error("plain"))).toBe("plain");
     expect(errorMessage("text")).toBe("text");
+  });
+});
+
+describe("workspace", () => {
+  it("sends the same private workspace ID on every request", async () => {
+    resetWorkspace();
+    const fetchMock = stubFetch(async () => jsonResponse({ items: [] }));
+    await api.listContracts();
+    await api.dashboard().catch(() => {});
+    const ids = fetchMock.mock.calls.map((c) => c[1].headers.get("X-Workspace-ID"));
+    expect(ids[0]).toMatch(/^ws_[A-Za-z0-9]{16,64}$/);
+    expect(new Set(ids).size).toBe(1);
+    expect(ids[0]).toBe(workspaceId());
+  });
+
+  it("starts a different workspace after a reset", () => {
+    const before = workspaceId();
+    resetWorkspace();
+    expect(workspaceId()).not.toBe(before);
   });
 });

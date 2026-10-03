@@ -114,9 +114,9 @@ def _error_text(response: httpx.Response) -> str:
         return response.text[:300]
 
 
-def check_available() -> tuple[bool, bool]:
+def check_available(config: ModelConfig | None = None) -> tuple[bool, bool]:
     """(reachable, model_available) via GET /models with a 5s timeout. Never raises."""
-    config = load_config()
+    config = config or load_config("groq")
     if not config.api_key:
         return False, False
     try:

@@ -129,3 +129,41 @@ def test_check_available(groq_env, monkeypatch):
 
     monkeypatch.setattr(httpx, "get", boom)
     assert groq_client.check_available() == (False, False)
+
+
+def test_fallback_used_only_when_primary_is_down(monkeypatch):
+    monkeypatch.setenv("LLM_PROVIDER", "ollama")
+    monkeypatch.setenv("LLM_FALLBACK_PROVIDER", "groq")
+    monkeypatch.setenv("GROQ_API_KEY", "test-key")
+    from ai.llm import ollama_client
+
+    monkeypatch.setattr(groq_client, "check_available", lambda config=None: (True, True))
+    monkeypatch.setattr(ollama_client, "check_available", lambda config=None: (True, True))
+    assert llm_client.active_config().provider == "ollama"
+    assert isinstance(llm_client.make_client(), OllamaClient)
+
+    monkeypatch.setattr(ollama_client, "check_available", lambda config=None: (False, False))
+    assert llm_client.active_config().provider == "groq"
+    assert isinstance(llm_client.make_client(), GroqClient)
+    assert llm_client.check_available() == (True, True)
+
+    monkeypatch.setattr(groq_client, "check_available", lambda config=None: (False, False))
+    assert llm_client.active_config().provider == "ollama"  # neither up: report the primary
+    assert llm_client.check_available() == (False, False)
+
+
+def test_no_fallback_by_default(monkeypatch):
+    monkeypatch.setenv("LLM_PROVIDER", "ollama")
+    monkeypatch.delenv("LLM_FALLBACK_PROVIDER", raising=False)
+    from ai.llm import ollama_client
+
+    monkeypatch.setattr(ollama_client, "check_available", lambda config=None: (False, False))
+    assert llm_client.active_config().provider == "ollama"
+
+
+def test_invalid_fallback_is_rejected(monkeypatch):
+    monkeypatch.setenv("LLM_FALLBACK_PROVIDER", "nope")
+    from ai.llm.model_config import fallback_provider
+
+    with pytest.raises(ValueError):
+        fallback_provider()

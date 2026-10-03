@@ -26,9 +26,21 @@ class ModelConfig:
     api_key: str = ""
 
 
-def load_config() -> ModelConfig:
-    """Read the AI settings documented in docs/ai/model-config.md (defaults match .env.example)."""
-    provider = os.environ.get("LLM_PROVIDER", "ollama").strip().lower() or "ollama"
+def fallback_provider() -> str | None:
+    """`LLM_FALLBACK_PROVIDER`: used only when the primary provider is unavailable (empty = none)."""
+    name = os.environ.get("LLM_FALLBACK_PROVIDER", "").strip().lower()
+    if not name:
+        return None
+    if name not in PROVIDERS:
+        raise ValueError(f"LLM_FALLBACK_PROVIDER must be one of {PROVIDERS}, got {name!r}")
+    return name
+
+
+def load_config(provider: str | None = None) -> ModelConfig:
+    """Read the AI settings documented in docs/ai/model-config.md (defaults match .env.example).
+
+    `provider` overrides LLM_PROVIDER (used to build the fallback's config)."""
+    provider = provider or os.environ.get("LLM_PROVIDER", "ollama").strip().lower() or "ollama"
     if provider not in PROVIDERS:
         raise ValueError(f"LLM_PROVIDER must be one of {PROVIDERS}, got {provider!r}")
     if provider == "groq":

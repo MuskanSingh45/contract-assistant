@@ -2,7 +2,7 @@
 
 | Command | Runs | Needs the model |
 |---|---|---|
-| `make test` | backend + AI tests (pytest, 144), frontend tests (Vitest, 54), frontend ESLint | no |
+| `make test` | backend + AI tests (pytest, 158), frontend tests (Vitest, 56), frontend ESLint | no |
 | `make lint` | ruff lint + format check, ESLint, Prettier check | no |
 | `make eval` | real-model evaluation on the 5 sample contracts ([ai-evaluation.md](ai-evaluation.md)) | yes, about 7 min |
 | `.venv/bin/python -m pytest -m llm` | the one live-model smoke test (deselected by default) | yes |
@@ -19,7 +19,8 @@ Concrete cases and their expected values are in [test-cases.md](test-cases.md). 
 | Parsing | `tests/backend/documents/` | 17 | PDF/DOCX/TXT → segments with page and section; empty/scanned files fail with the right code |
 | API | `tests/backend/api/test_api.py` | 12 | endpoint shapes over the demo seed, upload checks, review/resolve recalculation, analysis failure persists nothing |
 | Errors and logs | `tests/backend/api/test_logging.py` | 15 | every response has `X-Request-ID`; error bodies carry it; 500s are generic but logged with a traceback; background analysis logs carry the request ID of `POST /analyze`; log setup is idempotent; JSON mode emits parseable records with event fields and tracebacks; the bare server URL points to the API docs |
-| AI | `tests/ai/` | 60 | citation validation, grounding checks (invented values dropped), conflict detection, clarification templates, Ollama client errors/timeouts, Groq client (provider selection, request shape, rate-limit waits, errors, health check), evaluation metrics |
+| AI | `tests/ai/` | 64 | citation validation, grounding checks (invented values dropped), conflict detection, clarification templates, Ollama client errors/timeouts, Groq client (provider selection, request shape, rate-limit waits, errors, health check), fallback to Groq only when Ollama is down, the production path picks the active provider, evaluation metrics |
+| Workspaces and limits | `tests/backend/api/test_workspaces.py` | 10 | two browsers never see each other's uploads, IDs, reviews or clarification answers; each starts with its own demo copy; malformed workspace IDs rejected; no header = default database; header ignored when off; analysis and new-workspace rate limits; oversized uploads rejected before the body is read |
 | Integration | `tests/integration/` | 17 | upload → analyze → review → recalculate; re-analysis; version comparison; edge cases (empty text, duplicates) |
 
 ## Frontend
@@ -28,7 +29,7 @@ Vitest + Testing Library + jsdom. Run `npm test` in `frontend/` (or `npm run tes
 
 | File | Tests | What it proves |
 |---|---|---|
-| `src/lib/api.test.js` | 10 | URL/query building, JSON and multipart bodies, error body → `ApiError` with request ID, non-JSON 5xx, network error, timeout |
+| `src/lib/api.test.js` | 12 | URL/query building, JSON and multipart bodies, error body → `ApiError` with request ID, non-JSON 5xx, network error, timeout; one stable workspace ID sent on every request, new ID after a reset |
 | `src/lib/useApi.test.jsx` | 4 | loading → data, errors normalized to `ApiError`, reload clears errors, late responses ignored |
 | `src/lib/format.test.js` | 5 | date display without timezone shift, days-until wording, citation labels, units |
 | `src/components/ui/States.test.jsx` | 4 | error state shows title by code, message, reference and retry; stale data kept on failed reload |

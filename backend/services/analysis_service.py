@@ -79,9 +79,9 @@ def _set_stage(conn: sqlite3.Connection, version_id: str, stage: str) -> None:
     conn.commit()
 
 
-def run(version_id: str) -> None:
-    """Background task entry point. Opens its own connection."""
-    conn = open_db()
+def run(version_id: str, workspace: str | None = None) -> None:
+    """Background task entry point. Opens its own connection to the caller's workspace database."""
+    conn = open_db(workspace)
     started = time.monotonic()
     try:
         conn.execute(

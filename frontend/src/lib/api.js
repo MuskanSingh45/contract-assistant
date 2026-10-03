@@ -1,5 +1,42 @@
 const BASE = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000/api";
 
+const WORKSPACE_KEY = "contract-assistant.workspace";
+let memoryWorkspace = null; // used when localStorage is unavailable (private mode, blocked storage)
+
+function newWorkspaceId() {
+  const random = globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
+  return `ws_${random.replace(/[^A-Za-z0-9]/g, "")}`;
+}
+
+/**
+ * This browser's private workspace ID, sent as X-Workspace-ID on every request. On the public
+ * deployment the backend keeps a separate database per workspace, so one visitor's uploads and
+ * reviews are never visible to another. Locally the backend ignores it.
+ */
+export function workspaceId() {
+  try {
+    let id = localStorage.getItem(WORKSPACE_KEY);
+    if (!id) {
+      id = newWorkspaceId();
+      localStorage.setItem(WORKSPACE_KEY, id);
+    }
+    return id;
+  } catch {
+    memoryWorkspace ??= newWorkspaceId();
+    return memoryWorkspace;
+  }
+}
+
+/** Forget this browser's workspace; the next request starts a fresh one with the demo data. */
+export function resetWorkspace() {
+  memoryWorkspace = null;
+  try {
+    localStorage.removeItem(WORKSPACE_KEY);
+  } catch {
+    /* storage unavailable: the in-memory ID was already cleared */
+  }
+}
+
 /** Default per-request timeout. Uploads get longer; analysis itself runs in the background. */
 export const TIMEOUT_MS = 30_000;
 const UPLOAD_TIMEOUT_MS = 120_000;
@@ -26,7 +63,9 @@ async function request(path, init, timeoutMs = TIMEOUT_MS) {
   const method = init?.method ?? "GET";
   let res;
   try {
-    res = await fetch(`${BASE}${path}`, { ...init, signal: AbortSignal.timeout(timeoutMs) });
+    const headers = new Headers(init?.headers);
+    headers.set("X-Workspace-ID", workspaceId());
+    res = await fetch(`${BASE}${path}`, { ...init, headers, signal: AbortSignal.timeout(timeoutMs) });
   } catch (e) {
     if (e instanceof DOMException && e.name === "TimeoutError") {
       console.warn(`[api] ${method} ${path} timed out after ${timeoutMs} ms`);

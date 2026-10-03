@@ -8,11 +8,12 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from backend.api import analysis, contracts, health, obligations, reviews, versions
 from backend.core.config import settings
-from backend.core.dependencies import open_db
 from backend.core.exceptions import register_error_handlers
+from backend.core.limits import UploadSizeLimitMiddleware
 from backend.core.logging import REQUEST_ID_HEADER, RequestContextMiddleware, setup_logging
+from backend.core.workspace import workspace_databases
 from backend.services import analysis_service
-from db.database import migrate
+from db.database import connect, migrate
 
 log = logging.getLogger(__name__)
 
@@ -20,16 +21,19 @@ log = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     setup_logging()
-    conn = open_db()
-    try:
-        migrate(conn)
-        analysis_service.mark_interrupted(conn)
-    finally:
-        conn.close()
+    # The default database plus, on the public deployment, every workspace database.
+    for path in [settings.database_path, *workspace_databases()]:
+        conn = connect(path)
+        try:
+            migrate(conn)
+            analysis_service.mark_interrupted(conn)
+        finally:
+            conn.close()
     log.info(
-        "Started (env=%s, database=%s, log_file=%s)",
+        "Started (env=%s, database=%s, workspaces=%s, log_file=%s)",
         settings.app_env,
         settings.database_path,
+        settings.workspaces,
         settings.log_file or "console only",
         extra={"event": "app.started"},
     )
@@ -51,6 +55,7 @@ app.add_middleware(
     expose_headers=[REQUEST_ID_HEADER],
 )
 # Added last = outermost, so the request ID is set before CORS and every handler runs.
+app.add_middleware(UploadSizeLimitMiddleware)
 app.add_middleware(RequestContextMiddleware)
 register_error_handlers(app)
 
