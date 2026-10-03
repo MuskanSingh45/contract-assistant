@@ -1,0 +1,29 @@
+SERVICES AGREEMENT
+
+This Services Agreement is entered into as of January 31, 2025 (the "Effective Date") by and between Acme Corporation ("Customer") and Example Services Ltd. ("Service Provider").
+
+1. SERVICES
+
+1.1 Scope. Service Provider shall provide the managed IT support services described in Schedule A.
+
+2. TERM AND RENEWAL
+
+2.1 Term. The initial term of this Agreement shall commence on the Effective Date and expire on January 31, 2027.
+
+2.2 Renewal. This Agreement shall automatically renew for successive twelve (12) month periods unless either party provides written notice of non-renewal at least ninety (90) days before the expiration of the then-current term.
+
+3. FEES
+
+3.1 Fees. Customer shall pay the fees set out in Schedule B within thirty (30) days of receipt of a valid invoice.
+
+4. REPORTING
+
+4.2 Reporting Obligations. Service Provider shall submit a compliance report to Customer within thirty (30) days after the end of each calendar quarter.
+
+6. INSURANCE
+
+6.1 Insurance. Service Provider shall deliver a current certificate of insurance to Customer annually on each anniversary of the Effective Date.
+
+7. TERMINATION
+
+7.1 Termination for Breach. Either party may terminate this Agreement upon thirty (30) days' written notice if the other party materially breaches this Agreement and fails to cure the breach within that period.

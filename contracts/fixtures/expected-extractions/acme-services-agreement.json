@@ -1,0 +1,114 @@
+{
+  "sample": "samples/simple/acme-services-agreement.txt",
+  "evaluation_date": "2026-10-03",
+  "fields": {
+    "party": [
+      {
+        "name": "Acme Corporation",
+        "role": "customer"
+      },
+      {
+        "name": "Example Services Ltd.",
+        "role": "service provider"
+      }
+    ],
+    "effective_date": [
+      {
+        "date": "2025-01-31"
+      }
+    ],
+    "expiration_date": [
+      {
+        "date": "2027-01-31"
+      }
+    ],
+    "initial_term": [],
+    "renewal_terms": [
+      {
+        "type": "automatic",
+        "period_value": 12,
+        "period_unit": "months"
+      }
+    ],
+    "notice_period": [
+      {
+        "value": 90,
+        "unit": "days",
+        "anchor": "expiration_date",
+        "purpose": "non_renewal"
+      },
+      {
+        "value": 30,
+        "unit": "days",
+        "anchor": "other",
+        "optional": true
+      }
+    ],
+    "termination_clause": [
+      {
+        "summary_contains": [
+          "breach",
+          "30"
+        ]
+      }
+    ]
+  },
+  "obligations": [
+    {
+      "description_contains": [
+        "compliance report"
+      ],
+      "responsible_party": "Example Services Ltd.",
+      "frequency": "quarterly",
+      "due_rule": {
+        "basis": "calendar_period_end",
+        "offset_days": 30
+      }
+    },
+    {
+      "description_contains": [
+        "insurance"
+      ],
+      "responsible_party": "Example Services Ltd.",
+      "frequency": "annually",
+      "due_rule": {
+        "basis": "effective_date_anniversary",
+        "offset_days": 0
+      }
+    },
+    {
+      "description_contains": [
+        "fees"
+      ],
+      "responsible_party": "Acme Corporation",
+      "optional": true
+    },
+    {
+      "description_contains": [
+        "services"
+      ],
+      "responsible_party": "Example Services Ltd.",
+      "optional": true
+    },
+    {
+      "description_contains": [
+        "non-renewal"
+      ],
+      "optional": true
+    }
+  ],
+  "must_not_contain_obligations": [
+    "terminate"
+  ],
+  "conflicts": [],
+  "renewal": {
+    "calculation_status": "calculated",
+    "expiration_date": "2027-01-31",
+    "current_term_end": "2027-01-31",
+    "notice_deadline": "2026-11-02"
+  },
+  "obligation_due_dates": {
+    "compliance report": "2026-10-30",
+    "insurance": "2027-01-31"
+  }
+}

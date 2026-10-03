@@ -1,0 +1,78 @@
+{
+  "sample": "samples/conflicting/globex-hosting-agreement.txt",
+  "evaluation_date": "2026-10-03",
+  "fields": {
+    "party": [
+      {
+        "name": "Globex Inc.",
+        "role": "client"
+      },
+      {
+        "name": "Initech Hosting LLC",
+        "role": "provider"
+      }
+    ],
+    "effective_date": [
+      {
+        "date": "2025-01-01",
+        "optional": true
+      }
+    ],
+    "expiration_date": [
+      {
+        "date": "2026-12-31"
+      }
+    ],
+    "initial_term": [],
+    "renewal_terms": [
+      {
+        "type": "automatic",
+        "period_value": 1,
+        "period_unit": "years"
+      }
+    ],
+    "notice_period": [
+      {
+        "value": 90,
+        "unit": "days",
+        "anchor": "expiration_date"
+      },
+      {
+        "value": 60,
+        "unit": "days",
+        "anchor": "expiration_date",
+        "purpose": "non_renewal"
+      }
+    ],
+    "termination_clause": [
+      {
+        "summary_contains": [
+          "notice"
+        ],
+        "optional": true
+      }
+    ]
+  },
+  "obligations": [
+    {
+      "description_contains": [
+        "host"
+      ],
+      "responsible_party": "Initech Hosting LLC",
+      "optional": true
+    }
+  ],
+  "conflicts": [
+    {
+      "field_name": "notice_period",
+      "values": [
+        90,
+        60
+      ]
+    }
+  ],
+  "renewal": {
+    "calculation_status": "blocked_by_conflict",
+    "notice_deadline": null
+  }
+}

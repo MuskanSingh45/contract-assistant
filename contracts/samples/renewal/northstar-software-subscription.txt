@@ -1,0 +1,21 @@
+SOFTWARE SUBSCRIPTION AGREEMENT
+
+This Software Subscription Agreement is effective as of March 15, 2026 (the "Effective Date") between Northstar Inc. ("Subscriber") and Cloud Platform Ltd. ("Vendor").
+
+1. SUBSCRIPTION
+
+1.1 Access. Vendor shall make the Northstar analytics platform available to Subscriber with 99.9% monthly availability.
+
+2. TERM AND RENEWAL
+
+2.1 Initial Term. The initial term of this Agreement is two (2) years from the Effective Date.
+
+2.2 Renewal. Upon expiry of the initial term, this Agreement shall automatically renew for successive one (1) year terms unless either party gives written notice of non-renewal at least thirty (30) business days before the end of the then-current term.
+
+3. FEES
+
+3.1 Subscription Fee. Subscriber shall pay the annual subscription fee on each anniversary of the Effective Date.
+
+4. REPORTING
+
+4.1 Uptime Report. Vendor shall deliver an uptime service report to Subscriber within ten (10) days after the end of each calendar month.

@@ -1,0 +1,37 @@
+{
+  "sample": "samples/renewal/northstar-software-subscription.txt",
+  "evaluation_date": "2026-10-03",
+  "tests": "Term given as a length (no explicit expiration), notice in business days, monthly calendar-period obligation.",
+  "fields": {
+    "party": [
+      { "name": "Northstar Inc." },
+      { "name": "Cloud Platform Ltd." }
+    ],
+    "effective_date": [ { "date": "2026-03-15" } ],
+    "expiration_date": [],
+    "initial_term": [ { "value": 2, "unit": "years" } ],
+    "renewal_terms": [ { "type": "automatic", "period_value": 1, "period_unit": "years" } ],
+    "notice_period": [ { "value": 30, "unit": "business_days", "anchor": "expiration_date" } ],
+    "termination_clause": []
+  },
+  "obligations": [
+    { "description_contains": ["uptime"], "responsible_party": "Cloud Platform Ltd.", "frequency": "monthly",
+      "due_rule": { "basis": "calendar_period_end", "offset_days": 10 } },
+    { "description_contains": ["fee"], "responsible_party": "Northstar Inc.", "frequency": "annually",
+      "due_rule": { "basis": "effective_date_anniversary", "offset_days": 0 } },
+    { "description_contains": ["availab"], "optional": true },
+    { "description_contains": ["non-renewal"], "optional": true }
+  ],
+  "must_not_contain_obligations": [],
+  "conflicts": [],
+  "renewal": {
+    "calculation_status": "calculated",
+    "expiration_date": "2028-03-15",
+    "current_term_end": "2028-03-15",
+    "notice_deadline": "2028-02-02"
+  },
+  "obligation_due_dates": {
+    "uptime": "2026-10-10",
+    "fee": "2027-03-15"
+  }
+}

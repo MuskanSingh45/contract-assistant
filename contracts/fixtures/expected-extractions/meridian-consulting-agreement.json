@@ -1,0 +1,32 @@
+{
+  "sample": "samples/ambiguous/meridian-consulting-agreement.txt",
+  "evaluation_date": "2026-10-03",
+  "tests": "No fixed term and vague notice: the model must return [] instead of inventing an expiration date or a number of days.",
+  "fields": {
+    "party": [
+      { "name": "Meridian Health Partners" },
+      { "name": "Brightline Advisory Group" }
+    ],
+    "effective_date": [ { "date": "2026-06-01" } ],
+    "expiration_date": [],
+    "initial_term": [],
+    "renewal_terms": [],
+    "notice_period": [],
+    "termination_clause": [ { "summary_contains": ["notice"], "optional": true } ]
+  },
+  "obligations": [
+    { "description_contains": ["status report"], "responsible_party": "Brightline Advisory Group" },
+    { "description_contains": ["access"], "responsible_party": "Meridian Health Partners", "optional": true },
+    { "description_contains": ["advisory"], "optional": true },
+    { "description_contains": ["fee"], "optional": true }
+  ],
+  "must_not_contain_obligations": ["terminate", "end this agreement"],
+  "conflicts": [],
+  "clarifications": [ { "kind": "missing" } ],
+  "renewal": {
+    "calculation_status": "incomplete",
+    "expiration_date": null,
+    "notice_deadline": null
+  },
+  "obligation_due_dates": {}
+}

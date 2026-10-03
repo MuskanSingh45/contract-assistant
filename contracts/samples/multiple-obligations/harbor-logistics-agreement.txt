@@ -1,0 +1,31 @@
+MASTER LOGISTICS SERVICES AGREEMENT
+
+This Master Logistics Services Agreement is effective as of January 1, 2026 between Harbor Freight Partners Inc. ("Customer") and Bluewater Logistics Ltd. ("Provider").
+
+1. TERM
+
+1.1 Term. This Agreement commences on the effective date and expires on December 31, 2028. This Agreement will not renew automatically.
+
+1.2 Termination for Convenience. Either party may terminate this Agreement for convenience upon sixty (60) days' written notice to the other party.
+
+2. PROVIDER OBLIGATIONS
+
+2.1 Invoicing. Provider shall deliver an invoice to Customer within five (5) days after the end of each calendar month.
+
+2.2 Business Reviews. Provider shall hold a business review meeting with Customer within fifteen (15) days after the end of each calendar quarter.
+
+2.3 Audit Report. Provider shall deliver the annual compliance audit report to Customer on or before March 1, 2027.
+
+2.4 Insurance. Provider shall maintain cargo insurance of at least USD 5,000,000 throughout the term of this Agreement.
+
+2.5 Security Incidents. Provider shall notify Customer of any security incident within seventy-two (72) hours of discovery.
+
+2.6 Suspension. Provider may suspend services if any invoice remains unpaid for sixty (60) days after its due date.
+
+3. CUSTOMER OBLIGATIONS
+
+3.1 Payment. Customer shall pay each undisputed invoice within thirty (30) days of receipt.
+
+3.2 Forecasts. Customer shall provide Provider with a rolling twelve-month volume forecast at the start of each calendar quarter.
+
+3.3 Inspection. Customer may inspect Provider's warehouse facilities upon ten (10) days' prior notice.

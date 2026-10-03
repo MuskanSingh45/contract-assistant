@@ -1,0 +1,41 @@
+{
+  "sample": "samples/multiple-obligations/harbor-logistics-agreement.txt",
+  "evaluation_date": "2026-10-03",
+  "tests": "Seven obligations mixed with rights ('may suspend', 'may inspect') that must NOT be extracted; explicit due date; non-renewing contract.",
+  "fields": {
+    "party": [
+      { "name": "Harbor Freight Partners Inc." },
+      { "name": "Bluewater Logistics Ltd." }
+    ],
+    "effective_date": [ { "date": "2026-01-01" } ],
+    "expiration_date": [ { "date": "2028-12-31" } ],
+    "initial_term": [],
+    "renewal_terms": [ { "type": "none", "optional": true } ],
+    "notice_period": [ { "value": 60, "unit": "days", "anchor": "other", "optional": true } ],
+    "termination_clause": [ { "summary_contains": ["convenience"], "optional": true } ]
+  },
+  "obligations": [
+    { "description_contains": ["invoice"], "responsible_party": "Bluewater Logistics Ltd.", "frequency": "monthly",
+      "due_rule": { "basis": "calendar_period_end", "offset_days": 5 } },
+    { "description_contains": ["review"], "responsible_party": "Bluewater Logistics Ltd.", "frequency": "quarterly",
+      "due_rule": { "basis": "calendar_period_end", "offset_days": 15 } },
+    { "description_contains": ["audit"], "responsible_party": "Bluewater Logistics Ltd.",
+      "due_rule": { "basis": "explicit_date", "offset_days": 0 } },
+    { "description_contains": ["insurance"], "responsible_party": "Bluewater Logistics Ltd." },
+    { "description_contains": ["security"], "responsible_party": "Bluewater Logistics Ltd." },
+    { "description_contains": ["pay"], "responsible_party": "Harbor Freight Partners Inc." },
+    { "description_contains": ["forecast"], "responsible_party": "Harbor Freight Partners Inc." }
+  ],
+  "must_not_contain_obligations": ["inspect", "suspend"],
+  "conflicts": [],
+  "renewal": {
+    "calculation_status": "incomplete",
+    "expiration_date": "2028-12-31",
+    "notice_deadline": null
+  },
+  "obligation_due_dates": {
+    "invoice": "2026-10-05",
+    "review": "2026-10-15",
+    "audit": "2027-03-01"
+  }
+}
