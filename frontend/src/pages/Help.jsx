@@ -20,6 +20,14 @@ export default function Help() {
           </p>
         </section>
         <section>
+          <h2 className="text-section">Where the AI runs</h2>
+          <p className="mt-2 text-body text-slate">
+            Run locally, the model (Qwen3) runs on your own computer through Ollama and contract text stays there. The
+            online demo uses Groq&apos;s hosted API instead, so uploaded text is sent to Groq. Upload only documents
+            that are not confidential, such as the sample contracts. Settings shows which service is in use.
+          </p>
+        </section>
+        <section>
           <h2 className="text-section">Status badges</h2>
           <div className="mt-3 flex flex-wrap gap-2">
             {["approved", "needs_review", "conflict", "stale", "upcoming", "rejected"].map((x) => (

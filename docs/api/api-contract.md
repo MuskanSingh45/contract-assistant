@@ -28,7 +28,7 @@ docs. If they disagree, fix whichever one is wrong in the same change.
 
 | Method | Path | Purpose | Doc |
 |---|---|---|---|
-| GET | `/api/health` | Backend, database and Ollama status | below |
+| GET | `/api/health` | Backend, database and AI model service status | below |
 | GET | `/api/dashboard` | Dashboard counts, upcoming deadlines, recent activity | [dashboard.md](dashboard.md) |
 | GET | `/api/contracts` | Contract list (search/filter) | [contracts.md](contracts.md) |
 | POST | `/api/contracts` | Upload a new contract (creates contract + version 1) | [contracts.md](contracts.md) |
@@ -97,9 +97,10 @@ These objects appear in several responses. Resource docs reference them by name.
 {
   "status": "ok",
   "database": "ok",
-  "ollama": { "reachable": true, "model": "qwen3:8b", "model_available": true }
+  "llm": { "provider": "ollama", "model": "qwen3:8b", "reachable": true, "model_available": true }
 }
 ```
 
-`status` is `degraded` when Ollama is unreachable or the model is not pulled. Uploading and
+`llm.provider` is `ollama` (local) or `groq` (hosted; the online deployment).
+`status` is `degraded` when the AI service is unreachable or the model is not available. Uploading and
 browsing still work in that state; starting an analysis fails with `AI_UNAVAILABLE`.

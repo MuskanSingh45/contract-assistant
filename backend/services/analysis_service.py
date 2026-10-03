@@ -11,7 +11,8 @@ import sqlite3
 import time
 
 from ai import errors as ai_errors
-from ai.llm.ollama_client import check_available
+from ai.llm.client import check_available
+from ai.llm.model_config import load_config
 from ai.pipeline import clarification as templates
 from ai.pipeline.orchestrator import analyze
 from ai.types import AnalysisResult, Citation, Segment
@@ -33,10 +34,12 @@ def progress_for(version_id: str) -> tuple[int, int] | None:
 
 def ensure_ai_available() -> None:
     reachable, model_ok = check_available()
+    provider = load_config().provider
     if not reachable:
-        raise AppError("AI_UNAVAILABLE", "Ollama is not reachable. Start it with `ollama serve`.", 503)
+        hint = "Start it with `ollama serve`." if provider == "ollama" else "Check GROQ_API_KEY and the network."
+        raise AppError("AI_UNAVAILABLE", f"The AI model service ({provider}) is not reachable. {hint}", 503)
     if not model_ok:
-        raise AppError("AI_UNAVAILABLE", "The configured model is not available in Ollama.", 503)
+        raise AppError("AI_UNAVAILABLE", f"The configured model is not available on {provider}.", 503)
 
 
 def start(conn: sqlite3.Connection, contract_id: str, version_id: str | None) -> sqlite3.Row:

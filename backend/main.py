@@ -56,3 +56,9 @@ register_error_handlers(app)
 
 for module in (health, contracts, analysis, versions, obligations, reviews):
     app.include_router(module.router, prefix="/api")
+
+
+@app.get("/", include_in_schema=False)
+def root():
+    """Landing response for the bare server URL (e.g. the hosted Space page)."""
+    return {"service": app.title, "api": "/api", "docs": "/docs", "health": "/api/health"}

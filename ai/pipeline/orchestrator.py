@@ -8,9 +8,8 @@ from collections.abc import Callable
 
 from rapidfuzz import fuzz
 
-from ai.llm.client import LLMClient
+from ai.llm.client import LLMClient, make_client
 from ai.llm.model_config import estimate_tokens, load_config
-from ai.llm.ollama_client import OllamaClient
 from ai.llm.structured_output import load_prompt
 from ai.pipeline import extraction, obligation_extraction
 from ai.pipeline.clarification import ambiguity_drafts
@@ -133,7 +132,7 @@ def analyze(
     """
     started = time.monotonic()
     config = load_config()
-    client = client or OllamaClient(config)
+    client = client or make_client(config)
     version = prompt_version()
     stats = {
         "windows": 0,

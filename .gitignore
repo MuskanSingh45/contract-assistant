@@ -45,3 +45,6 @@ uploads/*
 
 # AI evaluation output
 ai/evaluation/results/
+
+# Vercel CLI link and pulled env
+.vercel/

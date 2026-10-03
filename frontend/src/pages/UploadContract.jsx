@@ -46,7 +46,10 @@ export default function UploadContract() {
         nav(`/contracts/${cid}/analyzing`);
       } catch (e) {
         if (e instanceof ApiError && e.code === "AI_UNAVAILABLE") {
-          toast("Uploaded, but the AI model is unavailable. Start Ollama and re-analyze.", "error");
+          toast(
+            "Uploaded, but the AI model is unavailable right now. Use Re-analyze on the contract to try again.",
+            "error",
+          );
           nav(`/contracts/${cid}`);
           return;
         }

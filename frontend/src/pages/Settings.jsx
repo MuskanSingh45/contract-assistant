@@ -3,6 +3,8 @@ import { api } from "@/lib/api";
 import { PageHeader, Card } from "@/components/ui/Card";
 import { StatusBadge } from "@/components/ui/Badge";
 import { Async, TableSkeleton } from "@/components/ui/States";
+const PROVIDER_LABEL = { ollama: "Ollama (local)", groq: "Groq (hosted)" };
+
 export default function Settings() {
   const a = useApi(api.health);
   return (
@@ -24,20 +26,20 @@ export default function Settings() {
                 <StatusBadge kind={h.database.toLowerCase() === "ok" ? "approved" : "rejected"} label={h.database} />
               </p>
               <p>
-                Ollama reachable{" "}
+                AI service <b>{PROVIDER_LABEL[h.llm.provider] ?? h.llm.provider}</b>{" "}
                 <StatusBadge
-                  kind={h.ollama.reachable ? "approved" : "rejected"}
-                  label={h.ollama.reachable ? "Reachable" : "Unavailable"}
+                  kind={h.llm.reachable ? "approved" : "rejected"}
+                  label={h.llm.reachable ? "Reachable" : "Unavailable"}
                 />
               </p>
               <p>
-                Model <b>{h.ollama.model}</b>
+                Model <b>{h.llm.model}</b>
               </p>
               <p>
                 Model available{" "}
                 <StatusBadge
-                  kind={h.ollama.model_available ? "approved" : "rejected"}
-                  label={h.ollama.model_available ? "Available" : "Unavailable"}
+                  kind={h.llm.model_available ? "approved" : "rejected"}
+                  label={h.llm.model_available ? "Available" : "Unavailable"}
                 />
               </p>
             </Card>

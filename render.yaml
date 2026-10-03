@@ -1,0 +1,31 @@
+# Render Blueprint: the backend API on Render's free web service.
+# The model runs on Groq (LLM_PROVIDER=groq); GROQ_API_KEY is entered in the Render dashboard, never here.
+# Render's free disk is not persistent, so every start reloads the demo data (Acme, Globex).
+services:
+  - type: web
+    name: contract-assistant-api
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python scripts/reset_dev.py && uvicorn backend.main:app --host 0.0.0.0 --port $PORT --no-access-log
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.4
+      - key: APP_ENV
+        value: production
+      - key: FRONTEND_ORIGIN
+        value: https://contract-assistant-flame.vercel.app
+      - key: LLM_PROVIDER
+        value: groq
+      - key: GROQ_MODEL
+        value: qwen/qwen3.8-27b
+      - key: GROQ_API_KEY
+        sync: false
+      - key: OLLAMA_TIMEOUT_SECONDS
+        value: "120"
+      - key: LOG_FILE
+        value: ""
+      - key: LOG_FORMAT
+        value: text

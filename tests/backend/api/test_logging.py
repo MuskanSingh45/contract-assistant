@@ -188,3 +188,8 @@ def test_http_request_in_json_mode_has_structured_access_and_error_fields(client
     assert access["request_id"] == resp.headers["X-Request-ID"]
     error = next(e for e in entries if e.get("event") == "http.error")
     assert error["error_code"] == "CONTRACT_NOT_FOUND" and error["status"] == 404
+
+
+def test_root_points_to_api_and_docs(client):
+    body = client.get("/").json()
+    assert body["docs"] == "/docs" and body["health"] == "/api/health"
