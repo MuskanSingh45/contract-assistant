@@ -100,5 +100,5 @@ Deterministic, with no LLM: see [conflict-detection.md](conflict-detection.md) a
 
 - No model output reaches the database without passing schema, citation and business validation.
 - The model does no authoritative date arithmetic. Its `date` fields are only normalizations of quoted date text.
-- When the model is unavailable, the analysis fails visibly (`AI_UNAVAILABLE` / `AI_TIMEOUT`). There are no fallback or fabricated results.
+- When no model service is available, the analysis fails visibly (`AI_UNAVAILABLE` / `AI_TIMEOUT`). Results are never fabricated. A configured fallback provider (`LLM_FALLBACK_PROVIDER`) is a different real model running the same pipeline, not a substitute result ([model-config.md](model-config.md)).
 - Every analysis records `model_name` and `prompt_version` on the version.
