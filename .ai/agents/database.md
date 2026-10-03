@@ -1,6 +1,6 @@
 # Agent: Database (Codex)
 
-**Owns:** `db/`, `tests/database/`.
+**Owns:** `db/`. Database behaviour is tested through the API and integration tests (`tests/backend/api/`, `tests/integration/`).
 
 **Read first:** `docs/database/` (all), `db/migrations/001_initial.sql`, `db/seeds/development.sql`.
 

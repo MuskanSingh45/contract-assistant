@@ -1,8 +1,8 @@
 # Migrations
 
 `db/migrations/` is the **only** place where schema DDL lives. There is no `db/schema/`
-directory and no ORM model metadata. `backend/models/` holds plain dataclasses that mirror
-rows; they do not define tables.
+directory and no ORM model metadata. Services read rows as `sqlite3.Row` and serialize them
+to the documented API shapes; no Python class mirrors a table.
 
 ## Files
 

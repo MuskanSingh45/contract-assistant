@@ -38,6 +38,8 @@ def get_obligation(obligation_id: str, conn=Depends(get_db)):
 
 @router.patch("/obligations/{obligation_id}")
 def patch_obligation(obligation_id: str, body: dict = Body(...), conn=Depends(get_db)):
+    # A raw object (not a Pydantic model), so any field other than `status` can be rejected with
+    # VALIDATION_ERROR by review_service.set_obligation_status.
     return review_service.set_obligation_status(conn, obligation_id, body)
 
 

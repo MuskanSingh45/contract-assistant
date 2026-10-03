@@ -32,8 +32,7 @@ backend/
 │   ├── docx_parser.py     python-docx, paragraphs/headings, page = None
 │   ├── text_parser.py     .txt (evaluation/dev only, not exposed by upload)
 │   └── normalizer.py      whitespace/quote normalization, heading detection, segmentation
-├── models/            Dataclasses mirroring DB rows (no DDL)
-├── schemas/           Pydantic API request/response models (must match docs/api/)
+├── schemas/           Pydantic request models where FastAPI validates the body (analysis, reviews); must match docs/api/
 ├── core/              config (env), exceptions (AppError → error shape), logging, dependencies (db connection)
 └── utils/
     ├── dates.py           ALL date calculation (docs/architecture/date-calculation.md)
