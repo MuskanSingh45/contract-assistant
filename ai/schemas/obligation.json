@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "obligation.json",
+  "title": "Obligation extraction (one window)",
+  "description": "See docs/ai/extraction.md. [] means no obligations in this window.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "obligations"
+  ],
+  "properties": {
+    "obligations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "value",
+          "confidence",
+          "evidence",
+          "ambiguity_note"
+        ],
+        "properties": {
+          "value": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "description",
+              "responsible_party",
+              "frequency",
+              "frequency_text",
+              "due_rule",
+              "due_date_text"
+            ],
+            "properties": {
+              "description": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "responsible_party": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "frequency": {
+                "enum": [
+                  "one_time",
+                  "monthly",
+                  "quarterly",
+                  "annually",
+                  "other",
+                  null
+                ]
+              },
+              "frequency_text": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "due_rule": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "basis",
+                  "offset_days"
+                ],
+                "properties": {
+                  "basis": {
+                    "type": "string",
+                    "enum": [
+                      "explicit_date",
+                      "effective_date_anniversary",
+                      "calendar_period_end",
+                      "renewal_notice_deadline",
+                      "unspecified"
+                    ]
+                  },
+                  "offset_days": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                }
+              },
+              "due_date_text": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "confidence": {
+            "type": "string",
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ]
+          },
+          "evidence": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 3,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "segment_id",
+                "quote"
+              ],
+              "properties": {
+                "segment_id": {
+                  "type": "string",
+                  "pattern": "^S[0-9]+$"
+                },
+                "quote": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 300
+                }
+              }
+            }
+          },
+          "ambiguity_note": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

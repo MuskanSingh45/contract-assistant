@@ -1,0 +1,562 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "extraction.json",
+  "title": "Contract terms extraction (one window)",
+  "description": "See docs/ai/extraction.md. Every field is an array of candidates; [] means not found.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "parties",
+    "effective_date",
+    "expiration_date",
+    "initial_term",
+    "renewal_terms",
+    "notice_period",
+    "termination_clause"
+  ],
+  "properties": {
+    "parties": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "value",
+          "confidence",
+          "evidence",
+          "ambiguity_note"
+        ],
+        "properties": {
+          "value": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "role"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "role": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "confidence": {
+            "type": "string",
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ]
+          },
+          "evidence": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 3,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "segment_id",
+                "quote"
+              ],
+              "properties": {
+                "segment_id": {
+                  "type": "string",
+                  "pattern": "^S[0-9]+$"
+                },
+                "quote": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 300
+                }
+              }
+            }
+          },
+          "ambiguity_note": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "effective_date": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "value",
+          "confidence",
+          "evidence",
+          "ambiguity_note"
+        ],
+        "properties": {
+          "value": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "date_text",
+              "date"
+            ],
+            "properties": {
+              "date_text": {
+                "type": "string",
+                "minLength": 1
+              },
+              "date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+              }
+            }
+          },
+          "confidence": {
+            "type": "string",
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ]
+          },
+          "evidence": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 3,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "segment_id",
+                "quote"
+              ],
+              "properties": {
+                "segment_id": {
+                  "type": "string",
+                  "pattern": "^S[0-9]+$"
+                },
+                "quote": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 300
+                }
+              }
+            }
+          },
+          "ambiguity_note": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "expiration_date": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "value",
+          "confidence",
+          "evidence",
+          "ambiguity_note"
+        ],
+        "properties": {
+          "value": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "date_text",
+              "date"
+            ],
+            "properties": {
+              "date_text": {
+                "type": "string",
+                "minLength": 1
+              },
+              "date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+              }
+            }
+          },
+          "confidence": {
+            "type": "string",
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ]
+          },
+          "evidence": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 3,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "segment_id",
+                "quote"
+              ],
+              "properties": {
+                "segment_id": {
+                  "type": "string",
+                  "pattern": "^S[0-9]+$"
+                },
+                "quote": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 300
+                }
+              }
+            }
+          },
+          "ambiguity_note": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "initial_term": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "value",
+          "confidence",
+          "evidence",
+          "ambiguity_note"
+        ],
+        "properties": {
+          "value": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "value",
+              "unit"
+            ],
+            "properties": {
+              "value": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "unit": {
+                "type": "string",
+                "enum": [
+                  "days",
+                  "months",
+                  "years"
+                ]
+              }
+            }
+          },
+          "confidence": {
+            "type": "string",
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ]
+          },
+          "evidence": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 3,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "segment_id",
+                "quote"
+              ],
+              "properties": {
+                "segment_id": {
+                  "type": "string",
+                  "pattern": "^S[0-9]+$"
+                },
+                "quote": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 300
+                }
+              }
+            }
+          },
+          "ambiguity_note": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "renewal_terms": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "value",
+          "confidence",
+          "evidence",
+          "ambiguity_note"
+        ],
+        "properties": {
+          "value": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "type",
+              "period_value",
+              "period_unit"
+            ],
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "automatic",
+                  "optional",
+                  "none"
+                ]
+              },
+              "period_value": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 1
+              },
+              "period_unit": {
+                "enum": [
+                  "days",
+                  "months",
+                  "years",
+                  null
+                ]
+              }
+            }
+          },
+          "confidence": {
+            "type": "string",
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ]
+          },
+          "evidence": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 3,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "segment_id",
+                "quote"
+              ],
+              "properties": {
+                "segment_id": {
+                  "type": "string",
+                  "pattern": "^S[0-9]+$"
+                },
+                "quote": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 300
+                }
+              }
+            }
+          },
+          "ambiguity_note": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "notice_period": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "value",
+          "confidence",
+          "evidence",
+          "ambiguity_note"
+        ],
+        "properties": {
+          "value": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "value",
+              "unit",
+              "anchor",
+              "purpose"
+            ],
+            "properties": {
+              "value": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "unit": {
+                "type": "string",
+                "enum": [
+                  "days",
+                  "business_days",
+                  "months"
+                ]
+              },
+              "anchor": {
+                "type": "string",
+                "enum": [
+                  "expiration_date",
+                  "renewal_date",
+                  "other"
+                ]
+              },
+              "purpose": {
+                "type": "string",
+                "enum": [
+                  "non_renewal",
+                  "termination",
+                  "other"
+                ]
+              }
+            }
+          },
+          "confidence": {
+            "type": "string",
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ]
+          },
+          "evidence": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 3,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "segment_id",
+                "quote"
+              ],
+              "properties": {
+                "segment_id": {
+                  "type": "string",
+                  "pattern": "^S[0-9]+$"
+                },
+                "quote": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 300
+                }
+              }
+            }
+          },
+          "ambiguity_note": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "termination_clause": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "value",
+          "confidence",
+          "evidence",
+          "ambiguity_note"
+        ],
+        "properties": {
+          "value": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "summary"
+            ],
+            "properties": {
+              "summary": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 300
+              }
+            }
+          },
+          "confidence": {
+            "type": "string",
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ]
+          },
+          "evidence": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 3,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "segment_id",
+                "quote"
+              ],
+              "properties": {
+                "segment_id": {
+                  "type": "string",
+                  "pattern": "^S[0-9]+$"
+                },
+                "quote": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 300
+                }
+              }
+            }
+          },
+          "ambiguity_note": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    }
+  }
+}
