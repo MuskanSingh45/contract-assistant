@@ -43,8 +43,5 @@ uploads/*
 # AI / model cache
 .ai/cache/
 
-# Frontend build info
-*.tsbuildinfo
-
 # AI evaluation output
 ai/evaluation/results/

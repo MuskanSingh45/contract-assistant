@@ -31,12 +31,13 @@ Order = critical path to the demo. Tasks marked ⭐ are required for the demo.
 | Q05 | | Structured logs: `LOG_FORMAT=json`, named events for HTTP, analysis and LLM steps | Claude sub-agent, reviewed by Claude | Q01 | done | `docs/architecture/backend-architecture.md#logging` |
 | Q06 | | Client-side validation in the review edit and clarification answer forms | Claude sub-agent, reviewed by Claude | Q02 | done | `docs/frontend/architecture.md#error-handling` |
 | Q07 | | README (architecture, scope, tests, limitations, deployment) and root `AGENT_USAGE.md` (prompts, mistakes, verification) | Claude | Q04 | done | `README.md`, `AGENT_USAGE.md` |
+| Q08 | | Frontend converted from TypeScript to JavaScript (developer's stack choice); types kept as JSDoc typedefs | Claude | Q07 | done | `docs/decisions/008-frontend-language.md` |
 | P01 | | Git history, license, demo rehearsal | User | Q01–Q07 | in progress | history and MIT license pushed to github.com/MuskanSingh45/contract-assistant; demo rehearsal left |
 | P02 | | Deployment packaging and docs | — | P01 | todo | `docs/architecture/deployment.md` |
 
 **Status 2026-10-03 night:** the end-to-end demo works with the real model (about 2 min per contract). A04 (evaluation), S01 (3 more samples) and T01 (17 integration tests, by Codex) are done. Fixed a parser bug: short numbered clauses were dropped as headings (regression test added).
 
-**Status 2026-10-03, quality pass (Q01–Q04):** `make test` passes (130 backend/AI + 54 frontend tests + typecheck) and `make lint` is clean. Log: `tasks/completed/2026-10-03-Q01-Q04-quality-pass.md`. Q05–Q06 added JSON logs and form validation (log: `tasks/completed/2026-10-03-Q05-Q06-logs-validation.md`). Next: P01 (git history, license, demo rehearsal), then P02.
+**Status 2026-10-03, quality pass (Q01–Q04):** `make test` passes (130 backend/AI + 54 frontend tests + frontend checks) and `make lint` is clean. Log: `tasks/completed/2026-10-03-Q01-Q04-quality-pass.md`. Q05–Q06 added JSON logs and form validation (log: `tasks/completed/2026-10-03-Q05-Q06-logs-validation.md`). Next: P01 (git history, license, demo rehearsal), then P02.
 
 **Parallel start:** F01, B01, B04, B06, A01 and A02 have no blocking dependencies.
 **Demo-safe fallback:** if AI work slips, B03 + F02 over seed data still demonstrate review, citations, conflicts and deadlines.

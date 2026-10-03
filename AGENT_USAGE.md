@@ -35,7 +35,8 @@ No other AI tools were used. The product itself uses a local model (Qwen3-8B via
 | PDF/DOCX/TXT parsers + tests | Claude sub-agent | Claude | Accepted; a bug found later (see below) |
 | JSON log format with named events (Q05) | Claude sub-agent | Claude: diff review, full test run, live server check | Accepted |
 | Client-side form validation (Q06) | Claude sub-agent | Claude: rules cross-checked against `ai/schemas/`, full test run | Accepted, with one deviation from the brief that was correct |
-| Product scope, deadline, architecture decisions, dropping Lovable, license, GitHub account | **Not delegated:** the developer | — | — |
+| Frontend TypeScript → JavaScript conversion (Q08) | Claude (mechanical type removal with Sucrase; types kept as JSDoc) | Claude: all 54 frontend tests, ESLint, build | Accepted |
+| Product scope, deadline, architecture decisions, stack choice, dropping Lovable, license, GitHub account | **Not delegated:** the developer | — | — |
 
 ## Representative prompts
 
@@ -77,6 +78,7 @@ The pattern in every brief: the goal tied to a requirement, the files to read fi
 | 8 | The logging doc claimed "model outputs are not logged", but dropped candidates log their value | Claude | Re-reading the code before finishing the doc | Wording corrected to list exactly what is logged |
 | 9 | A bulk find-and-replace of test counts also changed the numbers in an older task log, which records a past run | Claude | Checking the diff | Historical numbers restored |
 | 10 | Commits would have been authored with the machine's global git identity, not the developer's GitHub account | Environment | Checked before the first commit | Identity set for this repo only |
+| 11 | After the TypeScript → JavaScript conversion, all tests, lint and the build passed, but the app rendered with **no styling**: the Tailwind config still only scanned `.ts`/`.tsx` files for class names | Claude | Opening the app in Chrome after the automated checks | Tailwind globs changed to `.js`/`.jsx`; the app was rechecked page by page with no console errors. Shows why the manual browser check stays in the process |
 | R1 | **Rejected:** `npm audit fix --force`, which upgrades React Router to v7 (breaking) the day before the deadline | Tool suggestion | Advisory reviewed: not exploitable here (links only to server IDs) | Deferred and documented; v7 behaviour flags turned on |
 | R2 | **Rejected:** deleting the `# noqa: BLE001` comments that ruff reported as unused | Linter suggestion | The comments showed blind-except checks were intended | The `BLE` rule was enabled instead, so the comments now do their job |
 | R3 | **Dropped:** the frontend mock-data mode from the original plan | Original plan | The frontend was built against the running backend | Docs that still described it were corrected |
@@ -87,7 +89,7 @@ Nothing was accepted on an agent's word alone:
 
 | Check | What it gives |
 |---|---|
-| `make test` | 130 backend/AI tests and 54 frontend tests, plus the typecheck. Re-run by the main session after every delegated task, not taken from the sub-agent's report |
+| `make test` | 130 backend/AI tests and 54 frontend tests, plus static checks (the TypeScript typecheck while the frontend was TypeScript, ESLint after the move to JavaScript). Re-run by the main session after every delegated task, not taken from the sub-agent's report |
 | `make lint` | ruff, ESLint and Prettier must be clean |
 | Cross-review | Every Codex and sub-agent result reviewed against the docs ([reviewer checklist](.ai/agents/reviewer.md)) |
 | `make eval` | Real-model accuracy against expected outputs for 5 contracts ([results](docs/testing/ai-evaluation.md)) |
@@ -98,7 +100,7 @@ Nothing was accepted on an agent's word alone:
 
 ## What stayed with the developer
 - Scope, priorities and the deadline; what is in the MVP and what is excluded.
-- Architecture decisions (ADRs 001–008) and dropping Lovable.
+- Architecture decisions (ADRs 001–008), dropping Lovable, and moving the frontend from TypeScript to JavaScript.
 - The GitHub account, repository and license. Commits and pushes happened only on the developer's explicit instruction.
 - The final demo.
 

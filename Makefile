@@ -2,7 +2,7 @@
 #
 #   make setup   install everything (Python venv, frontend deps, .env, database + demo data, AI model)
 #   make dev     start Ollama (if needed), backend :8000 and frontend :5173 together; Ctrl-C stops both
-#   make test    backend/AI tests (pytest) + frontend tests (Vitest) + frontend typecheck
+#   make test    backend/AI tests (pytest) + frontend tests (Vitest) + frontend ESLint
 #   make lint    ruff (lint + format check) + ESLint + Prettier check
 #   make fmt     auto-format Python (ruff) and frontend (Prettier)
 #   make eval    real-model AI evaluation on the sample contracts (about 7 min; needs Ollama)
@@ -64,7 +64,7 @@ test:
 	@$(PY) -m pytest -q -p no:warnings
 	@echo "==> Frontend tests"
 	@cd frontend && npx vitest run
-	@cd frontend && npx tsc -b --noEmit && echo "frontend typecheck ok"
+	@cd frontend && npx eslint . && echo "frontend lint ok"
 
 lint:
 	@$(VENV)/bin/ruff check .

@@ -28,7 +28,7 @@ Open http://localhost:5173. API docs are at http://localhost:8000/docs.
 
 | Command | What it does |
 |---|---|
-| `make test` | 130 backend/AI tests (pytest) + 54 frontend tests (Vitest) + typecheck. No model needed |
+| `make test` | 130 backend/AI tests (pytest) + 54 frontend tests (Vitest) + frontend ESLint. No model needed |
 | `make lint` | ruff lint/format check, ESLint, Prettier check (`make fmt` fixes) |
 | `make eval` | real-model evaluation on the 5 sample contracts (about 7 min) |
 | `make reset` | restore the demo data (Acme clean, Globex with an open conflict) |
@@ -43,7 +43,7 @@ the Review Queue, and the notice deadline appears.
 ## Architecture
 
 ```
-Browser ── React + TypeScript (Vite) ──HTTP/JSON──▶ FastAPI ──▶ services ──▶ SQLite
+Browser ── React + JavaScript (Vite) ──HTTP/JSON──▶ FastAPI ──▶ services ──▶ SQLite
                                                        │
                                                        └─ background task ─▶ AI pipeline ─▶ Ollama (Qwen3-8B, local)
 ```
@@ -60,7 +60,7 @@ Browser ── React + TypeScript (Vite) ──HTTP/JSON──▶ FastAPI ──
 
 | Layer | Tech | Where |
 |---|---|---|
-| Frontend | React 18, TypeScript, Vite, Tailwind, React Router | `frontend/` |
+| Frontend | React 18 (JavaScript/JSX), Vite, Tailwind, React Router; Node.js 18+ for tooling | `frontend/` |
 | API and services | FastAPI, stdlib `sqlite3` (no ORM) | `backend/` |
 | Data | SQLite; schema in SQL migrations | `db/` |
 | AI | Ollama + Qwen3-8B, JSON Schema output, grounding validators | `ai/` |
@@ -165,7 +165,7 @@ status polling, and `LOG_FORMAT=json` for one JSON object per line (events such 
 | `backend/` | FastAPI app, services, document parsers, date engine |
 | `ai/` | Ollama client, extraction pipeline, validators, prompts, JSON Schemas, evaluation |
 | `db/` | SQL migrations (schema source of truth), seed data, connection/migration runner |
-| `frontend/` | React + TypeScript app (Vite, Tailwind), tests next to the code |
+| `frontend/` | React + JavaScript app (Vite, Tailwind), tests next to the code |
 | `contracts/` | Sample contracts + expected extractions for evaluation |
 | `tests/` | Backend, AI, database and integration tests |
 | `scripts/` | setup, reset, seed, run backend, evaluate AI |

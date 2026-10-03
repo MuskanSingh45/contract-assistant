@@ -1,6 +1,6 @@
 /** Design tokens from the Contract Assistant design system (page 1 of the product UI). */
 export default {
-  content: ["./index.html", "./src/**/*.{ts,tsx}"],
+  content: ["./index.html", "./src/**/*.{js,jsx}"],
   theme: {
     extend: {
       fontFamily: { sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"] },

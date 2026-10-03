@@ -53,7 +53,7 @@ shows it as **Reference** on error screens. Logging details: [backend architectu
 
 ## Client-side codes
 
-The frontend's `ApiError` (`frontend/src/lib/api.ts`) adds codes for failures that never reach the backend:
+The frontend's `ApiError` (`frontend/src/lib/api.js`) adds codes for failures that never reach the backend:
 
 | Code | When |
 |---|---|

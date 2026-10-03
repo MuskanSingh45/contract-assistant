@@ -2,7 +2,7 @@
 
 | Command | Runs | Needs the model |
 |---|---|---|
-| `make test` | backend + AI tests (pytest, 130), frontend tests (Vitest, 54), frontend typecheck | no |
+| `make test` | backend + AI tests (pytest, 130), frontend tests (Vitest, 54), frontend ESLint | no |
 | `make lint` | ruff lint + format check, ESLint, Prettier check | no |
 | `make eval` | real-model evaluation on the 5 sample contracts ([ai-evaluation.md](ai-evaluation.md)) | yes, about 7 min |
 | `.venv/bin/python -m pytest -m llm` | the one live-model smoke test (deselected by default) | yes |
@@ -28,18 +28,18 @@ Vitest + Testing Library + jsdom. Run `npm test` in `frontend/` (or `npm run tes
 
 | File | Tests | What it proves |
 |---|---|---|
-| `src/lib/api.test.ts` | 10 | URL/query building, JSON and multipart bodies, error body → `ApiError` with request ID, non-JSON 5xx, network error, timeout |
-| `src/lib/useApi.test.tsx` | 4 | loading → data, errors normalized to `ApiError`, reload clears errors, late responses ignored |
-| `src/lib/format.test.ts` | 5 | date display without timezone shift, days-until wording, citation labels, units |
-| `src/components/ui/States.test.tsx` | 4 | error state shows title by code, message, reference and retry; stale data kept on failed reload |
-| `src/components/ErrorBoundary.test.tsx` | 2 | a crashing page shows a recoverable message and is logged |
-| `src/components/review/validation.test.ts` | 8 | field rules for every editable value type (required, whole numbers above 0, real dates, enums, length limits) |
-| `src/components/review/ClarificationCard.test.tsx` | 6 | conflicts show both cited values and never pre-select; resolve sends the chosen source + note; failure is shown inline; invalid answers are not sent |
-| `src/components/review/ReviewActions.test.tsx` | 7 | approve, reject with confirmation (Escape cancels), edit sends the corrected value, invalid edits show inline messages and are not sent, failures keep the dialog open |
-| `src/pages/UploadContract.test.tsx` | 5 | client-side type/size checks, upload → analyze → progress page, AI unavailable, server rejection |
-| `src/pages/Contracts.test.tsx` | 3 | status per contract, search across parties, backend-down error with working retry |
+| `src/lib/api.test.js` | 10 | URL/query building, JSON and multipart bodies, error body → `ApiError` with request ID, non-JSON 5xx, network error, timeout |
+| `src/lib/useApi.test.jsx` | 4 | loading → data, errors normalized to `ApiError`, reload clears errors, late responses ignored |
+| `src/lib/format.test.js` | 5 | date display without timezone shift, days-until wording, citation labels, units |
+| `src/components/ui/States.test.jsx` | 4 | error state shows title by code, message, reference and retry; stale data kept on failed reload |
+| `src/components/ErrorBoundary.test.jsx` | 2 | a crashing page shows a recoverable message and is logged |
+| `src/components/review/validation.test.js` | 8 | field rules for every editable value type (required, whole numbers above 0, real dates, enums, length limits) |
+| `src/components/review/ClarificationCard.test.jsx` | 6 | conflicts show both cited values and never pre-select; resolve sends the chosen source + note; failure is shown inline; invalid answers are not sent |
+| `src/components/review/ReviewActions.test.jsx` | 7 | approve, reject with confirmation (Escape cancels), edit sends the corrected value, invalid edits show inline messages and are not sent, failures keep the dialog open |
+| `src/pages/UploadContract.test.jsx` | 5 | client-side type/size checks, upload → analyze → progress page, AI unavailable, server rejection |
+| `src/pages/Contracts.test.jsx` | 3 | status per contract, search across parties, backend-down error with working retry |
 
-Approach: tests interact the way a user does (roles, labels, visible text) and stub the `api` module or `fetch`, so they do not need the backend. `src/test/render.tsx` renders with the same providers as `main.tsx`; `src/test/fixtures.ts` builds objects in the `docs/api/` shapes.
+Approach: tests interact the way a user does (roles, labels, visible text) and stub the `api` module or `fetch`, so they do not need the backend. `src/test/render.jsx` renders with the same providers as `main.jsx`; `src/test/fixtures.js` builds objects in the `docs/api/` shapes.
 
 Not covered by automated tests: the analysis progress page's polling, the source drawer, and visual layout. These were checked by hand in Chrome against the running app (`.ai/tasks/current.md`, F02).
 

@@ -1,7 +1,7 @@
 # Scope
 
 ## MVP: must have
-- React/Vite/TypeScript frontend (built in-repo; [ADR 008](../decisions/008-frontend-language.md))
+- React/Vite JavaScript frontend (built in-repo; [ADR 008](../decisions/008-frontend-language.md))
 - FastAPI backend
 - SQLite database
 - PDF/DOCX upload and text extraction (text-based documents only)

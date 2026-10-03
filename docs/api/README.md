@@ -20,7 +20,7 @@ index and the shared objects.
 | [errors.md](errors.md) | Error shape and codes |
 
 The frontend consumes these shapes and does not invent backend behaviour; its types are in
-`frontend/src/lib/types.ts` and its test fixtures (`frontend/src/test/fixtures.ts`) use the
+`frontend/src/lib/types.js` (JSDoc typedefs) and its test fixtures (`frontend/src/test/fixtures.js`) use the
 same shapes. `db/seeds/development.sql` contains the same demo data as the examples.
 
 The running backend serves its OpenAPI spec at http://localhost:8000/docs; it must match these docs.

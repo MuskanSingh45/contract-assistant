@@ -8,7 +8,7 @@ Lovable was planned for this role and dropped ([ADR 008](../../docs/decisions/00
 
 **Must:**
 - Use the routes in `docs/frontend/architecture.md`, including `/contracts/:id/analyzing`.
-- Keep all API calls in `src/lib/api.ts`, with types in `src/lib/types.ts` matching `docs/api/` exactly.
+- Keep all API calls in `src/lib/api.js`, with the data shapes (JSDoc typedefs) in `src/lib/types.js` matching `docs/api/` exactly.
 - Show confidence, review status and obligation status as three different badges.
 - Show loading, empty and error states on every page; error states show the request ID (Reference).
 - Add or update Vitest tests for changed behaviour; `make test` and `make lint` must pass.

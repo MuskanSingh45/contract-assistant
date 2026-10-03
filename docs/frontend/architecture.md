@@ -1,6 +1,6 @@
 # Frontend Architecture
 
-React 18 + TypeScript + Vite + Tailwind 3 + React Router, built in-repo from the product designs ([ADR 008](../decisions/008-frontend-language.md)). The API client is `src/lib/api.ts` and its types are in `src/lib/types.ts`.
+React 18 + JavaScript (JSX) + Vite + Tailwind 3 + React Router, built in-repo from the product designs ([ADR 008](../decisions/008-frontend-language.md)). The API client is `src/lib/api.js`; the API data shapes are documented as JSDoc typedefs in `src/lib/types.js`.
 
 ## Routes
 
@@ -25,9 +25,9 @@ Contract details tabs: Overview, Extracted Information, Obligations, Versions. T
 tab is kept in the query string (`?tab=obligations`).
 
 ## API layer
-- `src/lib/api.ts` is the only module that calls the backend. It wraps `fetch` with `VITE_API_BASE_URL` (default `http://localhost:8000/api`) and has one function per endpoint in `docs/api/`. Types are in `src/lib/types.ts`.
+- `src/lib/api.js` is the only module that calls the backend. It wraps `fetch` with `VITE_API_BASE_URL` (default `http://localhost:8000/api`) and has one function per endpoint in `docs/api/`. Data shapes are JSDoc typedefs in `src/lib/types.js`.
 - There is no mock mode. Tests stub `api.*` functions or `fetch` instead (see Testing).
-- `src/lib/useApi.ts` loads data for a page: `{data, error, loading, reload}`. It ignores responses that arrive after the inputs changed.
+- `src/lib/useApi.js` loads data for a page: `{data, error, loading, reload}`. It ignores responses that arrive after the inputs changed.
 
 ## Error handling
 Every failure reaches the UI as an `ApiError {code, message, status, details, requestId}`:
@@ -39,14 +39,14 @@ Every failure reaches the UI as an `ApiError {code, message, status, details, re
 | No response within 30 s (uploads: 120 s) | `TIMEOUT` | "The server took too long to respond." |
 | Non-JSON error (e.g. a proxy 502) | `INTERNAL_ERROR` (5xx) / `REQUEST_FAILED` | "Request failed (status)" |
 
-- **Page loads** go through `Async` / `ErrorState` (`components/ui/States.tsx`): a title by code, the message, the server **Reference** (request ID) when there is one, and **Try again**. If a reload fails while data is already on screen, the data stays.
-- **Validation** happens before anything is sent: upload checks type and size; the edit and answer forms use `validateEditValue()` (`components/review/validation.ts`), which follows the value schemas in `ai/schemas/` and the backend. Messages appear under the field (with `aria-invalid`/`aria-describedby`) once it has been touched or Save was clicked; Save shows every problem and does not call the API until they are fixed. The backend still validates and its `VALIDATION_ERROR` is shown inline.
+- **Page loads** go through `Async` / `ErrorState` (`components/ui/States.jsx`): a title by code, the message, the server **Reference** (request ID) when there is one, and **Try again**. If a reload fails while data is already on screen, the data stays.
+- **Validation** happens before anything is sent: upload checks type and size; the edit and answer forms use `validateEditValue()` (`components/review/validation.js`), which follows the value schemas in `ai/schemas/` and the backend. Messages appear under the field (with `aria-invalid`/`aria-describedby`) once it has been touched or Save was clicked; Save shows every problem and does not call the API until they are fixed. The backend still validates and its `VALIDATION_ERROR` is shown inline.
 - **Actions** (approve, resolve, upload) show the message inline in the form or dialog that failed, or as an error toast. The dialog stays open so nothing typed is lost. `errorMessage(e)` is the one way to turn a thrown value into text.
-- **Render crashes** are caught per page by `components/ErrorBoundary.tsx` (inside `AppShell`, keyed by route), so the navigation keeps working and moving to another page recovers.
+- **Render crashes** are caught per page by `components/ErrorBoundary.jsx` (inside `AppShell`, keyed by route), so the navigation keeps working and moving to another page recovers.
 - **Console logging:** 4xx are `console.warn`, 5xx and crashes are `console.error`, each with the request ID. The request ID is the same one the backend writes to its log ([backend logging](../architecture/backend-architecture.md#logging)).
 
 ## Testing
-Vitest + Testing Library + jsdom; run `npm test` in `frontend/` or `make test`. Tests sit next to the code (`*.test.ts(x)`); helpers are in `src/test/` (`renderWithApp` renders with the router, toast and source-drawer providers; `fixtures.ts` builds objects in the `docs/api/` shapes). See [testing strategy](../testing/strategy.md#frontend).
+Vitest + Testing Library + jsdom; run `npm test` in `frontend/` or `make test`. Tests sit next to the code (`*.test.js(x)`); helpers are in `src/test/` (`renderWithApp` renders with the router, toast and source-drawer providers; `fixtures.js` builds objects in the `docs/api/` shapes). See [testing strategy](../testing/strategy.md#frontend).
 
 ## Rules
 - The frontend displays backend state. It never calculates deadlines, `days_until`, lifecycle status or review transitions; it only formats dates.

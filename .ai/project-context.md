@@ -9,7 +9,7 @@ It is **not legal advice**.
 ## Stack
 | Layer | Tech |
 |---|---|
-| Frontend | React 18 + TypeScript + Vite + Tailwind 3 + React Router, built in-repo; Vitest for tests |
+| Frontend | React 18 + JavaScript (JSX) + Vite + Tailwind 3 + React Router, built in-repo; Vitest for tests |
 | Backend | Python 3.11+, FastAPI, stdlib `sqlite3` (no ORM) |
 | DB | SQLite, `data/app.db`, schema in `db/migrations/` |
 | Documents | PyMuPDF, python-docx |

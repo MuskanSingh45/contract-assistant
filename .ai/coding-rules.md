@@ -19,7 +19,7 @@
 - Config only via `backend/core/config.py` (env vars from `.env.example`).
 
 ## Frontend
-- One API module (`src/lib/api.ts`). Types mirror `docs/api/`.
+- JavaScript (`.js`/`.jsx`), no TypeScript. One API module (`src/lib/api.js`). Data shapes mirror `docs/api/` as JSDoc typedefs in `src/lib/types.js`.
 - No date math. Use the API's `days_until_*` and calculated dates.
 - Handle every documented error `code` the page can receive. Turn errors into text with `errorMessage(e)`, never `String(e)`. Page loads go through `Async`/`ErrorState`.
 - Formatting/linting: Prettier + ESLint (`make lint`).
@@ -27,7 +27,7 @@
 ## Tests
 - Run `make test` and `make lint` before marking a task done.
 - `pytest`, files mirror source paths under `tests/`.
-- Frontend: Vitest + Testing Library, `*.test.ts(x)` next to the code. Query by role/label/text; stub `api.*`, not the network internals.
+- Frontend: Vitest + Testing Library, `*.test.js(x)` next to the code. Query by role/label/text; stub `api.*`, not the network internals.
 - Date and citation logic: pure unit tests with fixed `today = date(2026, 10, 3)`.
 - Tests that need Ollama are marked `@pytest.mark.llm` and are skipped by default.
 - API tests use a temporary SQLite file with migrations + seed applied.

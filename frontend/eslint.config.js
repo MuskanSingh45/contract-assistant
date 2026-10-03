@@ -1,18 +1,27 @@
 import js from "@eslint/js";
+import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
 import globals from "globals";
-import tseslint from "typescript-eslint";
 
-export default tseslint.config(
+export default [
   { ignores: ["dist", "node_modules"] },
+  js.configs.recommended,
   {
-    files: ["**/*.{ts,tsx}"],
-    extends: [js.configs.recommended, ...tseslint.configs.recommended],
-    languageOptions: { globals: globals.browser },
-    plugins: { "react-hooks": reactHooks },
+    files: ["**/*.{js,jsx}"],
+    languageOptions: {
+      ecmaVersion: "latest",
+      sourceType: "module",
+      globals: { ...globals.browser, ...globals.node },
+      parserOptions: { ecmaFeatures: { jsx: true } },
+    },
+    settings: { react: { version: "detect" } },
+    plugins: { react, "react-hooks": reactHooks },
     rules: {
       ...reactHooks.configs.recommended.rules,
-      "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
+      "react/jsx-uses-vars": "error", // components used only in JSX count as used
+      "react/jsx-key": "error",
+      "react/jsx-no-undef": "error",
+      "no-unused-vars": ["error", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
     },
   },
-);
+];
