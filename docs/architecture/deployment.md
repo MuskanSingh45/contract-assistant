@@ -26,13 +26,17 @@ a paid subscription (see `AGENT_USAGE.md`, mistake 12). The model provider is a 
 - Model routing: Groq is the primary and only provider online. Locally Ollama is primary and Groq can be the fallback (`LLM_FALLBACK_PROVIDER=groq`).
 
 ### Frontend on Vercel
-Deployed with the Vercel CLI from `frontend/`:
-```bash
-cd frontend
-vercel env add VITE_API_BASE_URL production   # once: https://contract-assistant-api-4qba.onrender.com/api
-vercel deploy --prod
-```
-`VITE_API_BASE_URL` is read at build time, so changing it needs a redeploy.
+- The Vercel project is linked to the GitHub repository with **Root Directory `frontend`**
+  (framework: Vite), so **every push to `main` redeploys the frontend**, like the backend on Render.
+- `VITE_API_BASE_URL=https://contract-assistant-api-4qba.onrender.com/api` is set once in the
+  project (Production). It is read at build time, so changing it needs a redeploy.
+- Manual deploy, if ever needed: `vercel deploy --prod` from the repository root.
+
+### Applying `render.yaml` changes
+Render auto-deploys **code** on every push, but changes to the blueprint's **environment
+variables** are applied by a blueprint sync: Render dashboard → Blueprints →
+contract-assistant-api → **Manual sync**. (Found when `WORKSPACES=true` reached the code but
+not the running service.)
 
 ### Model on Groq
 Free tier, no card: about 8,000 tokens per minute and 1,000 requests per day. The client waits
