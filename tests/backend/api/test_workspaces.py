@@ -127,3 +127,12 @@ def test_oversized_upload_rejected_before_reading_the_body(client):
     assert resp.status_code == 413
     assert resp.json()["error"]["code"] == "FILE_TOO_LARGE"
     assert resp.headers["X-Request-ID"] == resp.json()["error"]["request_id"]
+
+
+def test_new_visitor_alert_fires_once_per_workspace(public, monkeypatch):
+    calls = []
+    monkeypatch.setattr(workspace, "new_visitor", lambda: calls.append(1))
+    w = ws()
+    public.get("/api/contracts", headers=h(w))
+    public.get("/api/contracts", headers=h(w))
+    assert calls == [1]

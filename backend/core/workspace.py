@@ -22,6 +22,7 @@ from fastapi import Request
 from backend.core.config import settings
 from backend.core.exceptions import AppError
 from backend.core.limits import RateLimiter
+from backend.core.notify import new_visitor
 from db.database import connect, load_seed, migrate
 
 log = logging.getLogger(__name__)
@@ -69,6 +70,7 @@ def ensure_workspace(workspace: str, client_ip: str) -> None:
         finally:
             conn.close()
         log.info("workspace created", extra={"event": "workspace.created", "workspace": workspace})
+    new_visitor()
 
 
 def workspace_databases() -> list[str]:

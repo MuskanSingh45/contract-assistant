@@ -19,10 +19,11 @@ a paid subscription (see `AGENT_USAGE.md`, mistake 12). The model provider is a 
 - **Redeploy:** automatic on every push to `main`.
 - `scripts/reset_dev.py` runs on each start because the free disk is not persistent: every
   restart begins with the demo data (Acme, Globex). Uploads last until the next restart.
-- Free services sleep after 15 minutes without traffic and take about a minute to wake. `.github/workflows/keep-warm.yml` pings `/api/health` every 10 minutes to keep it awake during review (GitHub may delay scheduled runs by a few minutes).
+- Free services sleep after 15 minutes without traffic and take about a minute to wake. `.github/workflows/keep-warm.yml` pings `/api/health` every 10 minutes to keep it awake during review (GitHub runs scheduled workflows on a best-effort basis; on this repository they have run hours apart, so a cold start is still possible).
 - `FRONTEND_ORIGIN` allows the Vercel address (CORS). `LOG_FILE` is empty, so logs go to the console and appear in Render's Logs tab, with request IDs.
 - `GROQ_API_KEY` is marked `sync: false`: Render asks for it once and stores it as a secret.
 - `WORKSPACES=true`: one database per browser workspace in `data/workspaces/`, each starting with the demo data ([ADR 009](../decisions/009-workspace-isolation.md)). Limits: `MAX_NEW_WORKSPACES_PER_HOUR=30` per address, `MAX_ANALYSES_PER_HOUR=20` per address and per workspace.
+- `NOTIFY_URL` (optional, `sync: false`): when set, e.g. to a private `https://ntfy.sh/<topic>`, the backend sends a phone alert each time a new browser workspace is created (`backend/core/notify.py`). Only the time is sent. After a restart the disk is empty, so a returning browser alerts again.
 - Model routing: Groq is the primary and only provider online. Locally Ollama is primary and Groq can be the fallback (`LLM_FALLBACK_PROVIDER=groq`).
 
 ### Frontend on Vercel

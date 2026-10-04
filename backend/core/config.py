@@ -27,6 +27,8 @@ class Settings:
     workspace_dir: str = os.getenv("WORKSPACE_DIR", "data/workspaces")
     max_new_workspaces_per_hour: int = int(os.getenv("MAX_NEW_WORKSPACES_PER_HOUR", "30"))
     max_analyses_per_hour: int = int(os.getenv("MAX_ANALYSES_PER_HOUR", "20"))
+    # Optional: POST a phone alert here when a new browser opens the app (backend/core/notify.py).
+    notify_url: str = os.getenv("NOTIFY_URL", "").strip()
     log_level: str = os.getenv("LOG_LEVEL", "INFO")
     # Empty disables the file log (console only).
     log_file: str = os.getenv("LOG_FILE", "data/logs/backend.log")
